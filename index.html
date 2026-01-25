@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>המאסטרים של טוביהו - מערכת תגמולים</title>
+    <title>המאסטרים של טוביהו - מערכת מלאה</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,50 +18,52 @@
         .header-main { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
         .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 800; font-size: 1.4rem; color: var(--primary); }
         
-        nav { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; max-width: 1200px; margin: 0 auto; scrollbar-width: none; }
+        nav { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; max-width: 1200px; margin: 0 auto; scrollbar-width: none; }
         nav::-webkit-scrollbar { display: none; }
         nav a { 
             text-decoration: none; color: var(--dark); font-weight: 600; padding: 8px 16px; 
-            border-radius: 50px; white-space: nowrap; font-size: 0.95rem; transition: 0.3s;
+            border-radius: 50px; white-space: nowrap; font-size: 0.9rem; transition: 0.3s;
             background: #f8fafc; border: 1px solid #e2e8f0; cursor: pointer;
         }
         nav a.active { background: var(--primary); color: white; border-color: var(--primary); }
+        nav a.expert-link.active { background: var(--secondary); border-color: var(--secondary); }
 
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .page { display: none; animation: fadeIn 0.4s ease; }
+        .page { display: none; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Profile Styles */
-        .profile-header { background: white; padding: 30px; border-radius: 24px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 20px; }
-        .points-badge { font-size: 3rem; font-weight: 800; color: var(--primary); margin: 10px 0; }
-        .progress-container { background: #e2e8f0; height: 12px; border-radius: 10px; margin: 20px 0; overflow: hidden; }
-        .progress-bar { background: var(--success); height: 100%; transition: width 0.5s ease; }
+        /* Profile & Stats */
+        .profile-header { background: white; padding: 25px; border-radius: 24px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 20px; border-top: 6px solid var(--primary); }
+        .points-badge { font-size: 2.5rem; font-weight: 800; color: var(--primary); margin: 5px 0; }
+        .progress-container { background: #e2e8f0; height: 10px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { background: var(--success); height: 100%; transition: width 0.5s; }
 
         /* Grid & Cards */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 20px; padding: 20px; position: relative; box-shadow: var(--card-shadow); }
-        .points-tag { position: absolute; top: 15px; left: 15px; background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+        .card { background: white; border-radius: 20px; padding: 20px; position: relative; box-shadow: var(--card-shadow); border: 1px solid #f1f5f9; }
+        .tag { position: absolute; top: 15px; left: 15px; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; }
+        .tag-points { background: #fef3c7; color: #92400e; }
+        .tag-type { background: #e0e7ff; color: var(--primary); left: auto; right: 15px; }
 
-        .btn { width: 100%; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 1rem; }
+        .btn { width: 100%; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 10px; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; }
+        .btn-secondary { background: var(--secondary); color: white; }
         
-        #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--primary); padding: 20px; }
-        input, select, textarea { width: 100%; padding: 14px; border: 2px solid #f1f5f9; border-radius: 12px; margin-bottom: 15px; font-family: inherit; box-sizing: border-box; }
+        #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--primary); }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #f1f5f9; border-radius: 10px; margin-bottom: 12px; font-family: inherit; box-sizing: border-box; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: white; width: 100%; max-width: 500px; padding: 30px; border-radius: 24px; }
+        .modal-content { background: white; width: 100%; max-width: 450px; padding: 25px; border-radius: 24px; }
     </style>
 </head>
-<body onload="checkLoginStatus()">
+<body onload="initSystem()">
 
     <section id="login-screen">
-        <div style="background: white; padding: 30px; border-radius: 24px; text-align: center; max-width: 400px; width:100%">
-            <span style="font-size: 4rem;">👑</span>
-            <h1>המאסטרים של טוביהו</h1>
-            <input type="email" id="userEmail" placeholder="name@school.edu.il">
-            <button class="btn btn-primary" onclick="initApp()">כניסה</button>
+        <div style="background: white; padding: 30px; border-radius: 24px; text-align: center; width: 350px;">
+            <span style="font-size: 3rem;">👑</span>
+            <h2>המאסטרים של טוביהו</h2>
+            <input type="text" id="userName" placeholder="השם שלך">
+            <button class="btn btn-primary" onclick="handleLogin()">כניסה למערכת</button>
         </div>
     </section>
 
@@ -69,99 +71,111 @@
         <header>
             <div class="header-main">
                 <div class="logo" onclick="showPage('dashboard')">👑 המאסטרים</div>
-                <div onclick="showPage('profile')" style="cursor:pointer; background: #f1f5f9; padding: 5px 15px; border-radius: 50px; font-weight:700">
-                    👤 <span id="display-name"></span>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span id="top-points" style="font-weight:800; color:var(--primary)">💎 0</span>
+                    <button onclick="logout()" style="border:none; background:none; cursor:pointer; font-size:1.2rem">🚪</button>
                 </div>
             </div>
         </header>
         
         <nav>
             <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">לוח בקשות 🤝</a>
+            <a onclick="showPage('experts')" id="nav-experts" class="expert-link">נבחרת המומחים 🎓</a>
             <a onclick="showPage('profile')" id="nav-profile">הפרופיל שלי 👤</a>
-            <a onclick="showPage('new-request')" id="nav-new-request">בקשה חדשה +</a>
-            <a onclick="showPage('admin')" id="nav-admin" style="color: var(--danger);">ניהול 🛠️</a>
+            <a onclick="showPage('new')" id="nav-new">פרסום חדש +</a>
+            <a onclick="showPage('admin')" id="nav-admin" style="color:var(--danger)">ניהול 🛠️</a>
         </nav>
 
         <div class="container">
-            
             <div id="page-dashboard" class="page active">
                 <div class="grid" id="request-grid"></div>
             </div>
 
+            <div id="page-experts" class="page">
+                <div class="grid" id="expert-grid"></div>
+            </div>
+
             <div id="page-profile" class="page">
                 <div class="profile-header">
-                    <div style="font-size: 1.2rem; font-weight: 700;">שלום, <span id="prof-name"></span>!</div>
-                    <div class="points-badge"><span id="user-points">0</span></div>
-                    <div style="font-weight: 700; color: var(--gray);">נקודות מעורבות</div>
-                    
-                    <div class="progress-container">
-                        <div id="prof-bar" class="progress-bar" style="width: 0%"></div>
-                    </div>
-                    <div id="rank-text" style="font-weight: 800; color: var(--primary);">מאסטר מתחיל</div>
+                    <h2 id="prof-display-name">שם משתמש</h2>
+                    <div class="points-badge" id="prof-points">0</div>
+                    <p>נקודות מעורבות שצברת</p>
+                    <div class="progress-container"><div id="prof-bar" class="progress-bar"></div></div>
+                    <b id="rank-name">מאסטר מתלמד</b>
                 </div>
-
                 <h3>הפעילות שלי</h3>
                 <div id="my-activity" class="grid"></div>
             </div>
 
-            <div id="page-new-request" class="page">
-                <div style="background: white; padding: 30px; border-radius: 24px; max-width: 500px; margin: 0 auto;">
-                    <h2>פרסום בקשה</h2>
-                    <label>כותרת</label>
-                    <input type="text" id="req-title" placeholder="למשל: עזרה במתמטיקה">
-                    <label>תיאור</label>
-                    <textarea id="req-desc" rows="3"></textarea>
-                    <label>ניקוד למתנדב (10-50)</label>
-                    <input type="number" id="req-points" value="20" min="10" max="50">
-                    <button class="btn btn-primary" onclick="publishRequest()">פרסם וקבל עזרה</button>
+            <div id="page-new" class="page">
+                <div style="background:white; padding:25px; border-radius:20px; max-width:500px; margin:0 auto;">
+                    <h3>מה ברצונך לפרסם?</h3>
+                    <select id="post-type-select" onchange="togglePostForm()">
+                        <option value="request">בקשת עזרה (צריך עזרה)</option>
+                        <option value="expert">כרטיס מומחה (יכול לעזור)</option>
+                    </select>
+                    <hr>
+                    <div id="post-form">
+                        <label id="title-label">כותרת</label>
+                        <input type="text" id="post-title">
+                        <label>תיאור</label>
+                        <textarea id="post-desc" rows="3"></textarea>
+                        <div id="points-input-area">
+                            <label>ניקוד למתנדב (10-50)</label>
+                            <input type="number" id="post-points" value="20">
+                        </div>
+                        <button class="btn btn-primary" onclick="savePost()">פרסם עכשיו</button>
+                    </div>
                 </div>
             </div>
 
             <div id="page-admin" class="page">
-                <h2>אישורי מאץ' ותגמולים</h2>
+                <h2>בקשות הממתיונות לאישור</h2>
                 <div id="admin-list" class="grid"></div>
             </div>
-
         </div>
     </div>
 
-    <div id="volunteer-modal" class="modal">
+    <div id="action-modal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title">התנדבות לבקשה</h3>
+            <h3 id="modal-title">כותרת</h3>
             <label>השם שלך</label>
-            <input type="text" id="vol-name">
-            <label>זמינות (מתי נוח לך לעזור?)</label>
-            <textarea id="vol-info" rows="2"></textarea>
-            <button class="btn btn-primary" onclick="submitMatch()">שלח בקשה וצבור נקודות</button>
-            <button class="btn" onclick="closeModal()" style="margin-top:10px">ביטול</button>
+            <input type="text" id="action-name">
+            <label>הודעה/זמינות</label>
+            <textarea id="action-info" rows="2"></textarea>
+            <button class="btn btn-primary" id="modal-btn" onclick="processAction()">שלח</button>
+            <button class="btn" onclick="closeModal()">ביטול</button>
         </div>
     </div>
 
     <script>
-        // Data Store (Simulated)
-        let state = {
-            currentUser: { name: "", points: 0 },
-            requests: [
-                { id: 1, title: "עזרה במתמטיקה", desc: "משוואות ריבועיות", name: "יוסי", points: 30, status: "open" },
-                { id: 2, title: "סידור ספרייה", desc: "עזרה בסידור ספרים חדשים", name: "המזכירות", points: 50, status: "open" }
-            ],
+        // Database Initialization
+        let db = {
+            user: { name: "", points: 0 },
+            requests: [],
+            experts: [],
             matches: []
         };
 
-        function checkLoginStatus() {
-            const saved = localStorage.getItem('master_user');
+        function initSystem() {
+            const saved = localStorage.getItem('toviyahu_db');
             if (saved) {
-                state.currentUser = JSON.parse(saved);
-                loginSuccess();
+                db = JSON.parse(saved);
+                if (db.user.name) {
+                    loginSuccess();
+                }
             }
         }
 
-        function initApp() {
-            const email = document.getElementById('userEmail').value;
-            if (email.includes('@')) {
-                state.currentUser.name = email.split('@')[0];
-                state.currentUser.points = 0;
-                localStorage.setItem('master_user', JSON.stringify(state.currentUser));
+        function saveDB() {
+            localStorage.setItem('toviyahu_db', JSON.stringify(db));
+        }
+
+        function handleLogin() {
+            const name = document.getElementById('userName').value;
+            if (name) {
+                db.user.name = name;
+                saveDB();
                 loginSuccess();
             }
         }
@@ -169,132 +183,145 @@
         function loginSuccess() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'block';
-            document.getElementById('display-name').innerText = state.currentUser.name;
             renderAll();
         }
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        function logout() {
+            if(confirm("לצאת מהמערכת? הנתונים יישמרו.")) {
+                db.user.name = "";
+                saveDB();
+                location.reload();
+            }
+        }
+
+        function showPage(p) {
+            document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-            document.getElementById('nav-' + pageId).classList.add('active');
-            if(pageId === 'profile') renderProfile();
+            document.getElementById('page-'+p).classList.add('active');
+            document.getElementById('nav-'+p).classList.add('active');
+            renderAll();
+        }
+
+        function togglePostForm() {
+            const type = document.getElementById('post-type-select').value;
+            document.getElementById('points-input-area').style.display = (type === 'request') ? 'block' : 'none';
+            document.getElementById('title-label').innerText = (type === 'request') ? 'מה הבקשה?' : 'במה את/ה מומחה?';
+        }
+
+        function savePost() {
+            const type = document.getElementById('post-type-select').value;
+            const title = document.getElementById('post-title').value;
+            const desc = document.getElementById('post-desc').value;
+            const points = parseInt(document.getElementById('post-points').value) || 0;
+
+            if(!title) return alert("מלא כותרת");
+
+            const item = { id: Date.now(), title, desc, points, creator: db.user.name, status: 'open' };
+            
+            if(type === 'request') db.requests.unshift(item);
+            else db.experts.unshift(item);
+
+            saveDB();
+            alert("פורסם בהצלחה!");
+            showPage(type === 'request' ? 'dashboard' : 'experts');
         }
 
         function renderAll() {
-            renderDashboard();
+            document.getElementById('top-points').innerText = '💎 ' + db.user.points;
+            renderRequests();
+            renderExperts();
+            renderProfile();
             renderAdmin();
         }
 
-        function renderDashboard() {
+        function renderRequests() {
             const grid = document.getElementById('request-grid');
-            grid.innerHTML = state.requests.filter(r => r.status === 'open').map(r => `
+            grid.innerHTML = db.requests.filter(r => r.status === 'open').map(r => `
                 <div class="card">
-                    <div class="points-tag">💎 ${r.points} נק'</div>
+                    <div class="tag tag-points">💎 ${r.points}</div>
                     <h3 style="margin-top:20px">${r.title}</h3>
                     <p>${r.desc}</p>
-                    <div style="font-size:0.8rem; margin-bottom:10px">מאת: ${r.name}</div>
-                    <button class="btn btn-primary" onclick="openVolunteerModal(${r.id}, '${r.title}')">אני רוצה לעזור</button>
+                    <small>מאת: ${r.creator}</small>
+                    <button class="btn btn-primary" onclick="openModal(${r.id}, 'request')">אני רוצה לעזור</button>
                 </div>
-            `).join('');
+            `).join('') || '<p>אין בקשות כרגע</p>';
+        }
+
+        function renderExperts() {
+            const grid = document.getElementById('expert-grid');
+            grid.innerHTML = db.experts.map(e => `
+                <div class="card" style="border-top: 5px solid var(--secondary)">
+                    <h3>${e.title}</h3>
+                    <p>${e.desc}</p>
+                    <small>המומחה: ${e.creator}</small>
+                    <button class="btn btn-secondary" onclick="openModal(${e.id}, 'expert')">בקש עזרה</button>
+                </div>
+            `).join('') || '<p>אין מומחים כרגע</p>';
         }
 
         function renderProfile() {
-            document.getElementById('prof-name').innerText = state.currentUser.name;
-            document.getElementById('user-points').innerText = state.currentUser.points;
+            document.getElementById('prof-display-name').innerText = db.user.name;
+            document.getElementById('prof-points').innerText = db.user.points;
+            const prog = Math.min((db.user.points / 300) * 100, 100);
+            document.getElementById('prof-bar').style.width = prog + '%';
             
-            // Progress Calculation
-            const levelMax = 200;
-            const progress = Math.min((state.currentUser.points / levelMax) * 100, 100);
-            document.getElementById('prof-bar').style.width = progress + '%';
+            const activity = [...db.requests.filter(r => r.creator === db.user.name), 
+                             ...db.matches.filter(m => m.volName === db.user.name)];
             
-            if(state.currentUser.points > 150) document.getElementById('rank-text').innerText = "מאסטר על! 🔥";
-            else if(state.currentUser.points > 50) document.getElementById('rank-text').innerText = "מתנדב פעיל ✨";
-
-            // Activity
-            const activityGrid = document.getElementById('my-activity');
-            const myRequests = state.requests.filter(r => r.name === state.currentUser.name);
-            const myVolunteering = state.matches.filter(m => m.volName === state.currentUser.name);
-            
-            activityGrid.innerHTML = [...myRequests, ...myVolunteering].map(item => `
-                <div class="card" style="border-right: 4px solid var(--primary)">
-                    <h4>${item.title || 'התנדבות'}</h4>
-                    <div style="font-size:0.8rem">${item.status === 'approved' ? '✅ הושלם' : '⏳ בטיפול'}</div>
-                </div>
-            `).join('') || '<p>עוד לא ביצעת פעילות במערכת.</p>';
-        }
-
-        let currentId = null;
-        function openVolunteerModal(id, title) {
-            currentId = id;
-            document.getElementById('volunteer-modal').style.display = 'flex';
-        }
-        function closeModal() { document.getElementById('volunteer-modal').style.display = 'none'; }
-
-        function submitMatch() {
-            const volName = document.getElementById('vol-name').value;
-            const volInfo = document.getElementById('vol-info').value;
-            const req = state.requests.find(r => r.id === currentId);
-
-            state.matches.push({
-                id: Date.now(),
-                reqId: currentId,
-                volName,
-                volInfo,
-                points: req.points,
-                status: 'pending'
-            });
-
-            req.status = 'pending_match';
-            alert("נשלח לאישור מנהלת!");
-            closeModal();
-            renderAll();
+            document.getElementById('my-activity').innerHTML = activity.map(a => `
+                <div class="card"><h4>${a.title || 'התנדבות'}</h4><small>${a.status}</small></div>
+            `).join('');
         }
 
         function renderAdmin() {
             const list = document.getElementById('admin-list');
-            const pending = state.matches.filter(m => m.status === 'pending');
-            
-            list.innerHTML = pending.map(m => {
-                const req = state.requests.find(r => r.id === m.reqId);
-                return `
-                    <div class="card">
-                        <h3>אישור מאץ'</h3>
-                        <p><strong>${m.volName}</strong> רוצה לעזור ל-<strong>${req.name}</strong></p>
-                        <p>בנושא: ${req.title}</p>
-                        <div style="background:#f1f5f9; padding:10px; border-radius:10px; margin-bottom:10px">
-                            פרס תגמול: <strong>${m.points} נקודות</strong>
-                        </div>
-                        <button class="btn btn-success" onclick="approveMatch(${m.id})">אשר ותגמל בנקודות</button>
-                    </div>
-                `;
-            }).join('') || '<p>אין בקשות לאישור.</p>';
+            const pending = db.matches.filter(m => m.status === 'pending');
+            list.innerHTML = pending.map(m => `
+                <div class="card">
+                    <h4>בקשת מאץ'</h4>
+                    <p>${m.volName} ↔️ ${m.targetCreator}</p>
+                    <button class="btn btn-primary" onclick="approveMatch(${m.id})">אשר ותגמל</button>
+                </div>
+            `).join('') || '<p>אין בקשות לאישור</p>';
         }
 
-        function approveMatch(matchId) {
-            const match = state.matches.find(m => m.id === matchId);
-            match.status = 'approved';
-            
-            // גמול למתנדב (אם זה המשתמש הנוכחי)
-            if(match.volName === state.currentUser.name) {
-                state.currentUser.points += match.points;
-                localStorage.setItem('master_user', JSON.stringify(state.currentUser));
-            }
+        let curTarget = null;
+        function openModal(id, type) {
+            curTarget = {id, type};
+            document.getElementById('action-modal').style.display = 'flex';
+        }
+        function closeModal() { document.getElementById('action-modal').style.display = 'none'; }
 
-            alert("המאץ' אושר והנקודות הוענקו!");
+        function processAction() {
+            const name = document.getElementById('action-name').value;
+            const info = document.getElementById('action-info').value;
+            if(!name) return;
+
+            const source = curTarget.type === 'request' ? db.requests : db.experts;
+            const item = source.find(i => i.id === curTarget.id);
+
+            db.matches.push({
+                id: Date.now(),
+                volName: name,
+                volInfo: info,
+                targetId: item.id,
+                targetCreator: item.creator,
+                points: item.points || 0,
+                status: 'pending'
+            });
+
+            if(curTarget.type === 'request') item.status = 'matching';
+            saveDB();
+            alert("נשלח לאישור מנהלת");
+            closeModal();
             renderAll();
         }
 
-        function publishRequest() {
-            const title = document.getElementById('req-title').value;
-            const desc = document.getElementById('req-desc').value;
-            const points = parseInt(document.getElementById('req-points').value);
-            
-            state.requests.unshift({
-                id: Date.now(), title, desc, points, name: state.currentUser.name, status: 'open'
-            });
-            
-            showPage('dashboard');
+        function approveMatch(mid) {
+            const match = db.matches.find(m => m.id === mid);
+            match.status = 'approved';
+            if(match.volName === db.user.name) db.user.points += match.points;
+            saveDB();
             renderAll();
         }
     </script>
