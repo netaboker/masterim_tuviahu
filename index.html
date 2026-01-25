@@ -89,6 +89,7 @@
         
         .status-badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; }
         .status-pending { background: #fef3c7; color: #92400e; }
+        .status-waiting { background: #dcfce7; color: #166534; }
         
         .category-tag { background: #e0e7ff; color: var(--primary); padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; float: left; }
 
@@ -98,12 +99,41 @@
         }
         .btn-dark { background: var(--dark); color: white; }
         .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
         
-        #code-exporter { width: 100%; height: 200px; font-family: monospace; direction: ltr; background: #222; color: #fff; margin-top: 10px; }
+        /* Modal Style */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            align-items: center; justify-content: center;
+        }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 400px; text-align: right; }
+
+        #code-exporter { width: 100%; height: 100px; font-family: monospace; direction: ltr; background: #222; color: #fff; margin-top: 10px; }
 
     </style>
 </head>
 <body>
+
+    <div id="volunteer-modal" class="modal">
+        <div class="modal-content">
+            <h3>אני רוצה לעזור! 🙋‍♂️</h3>
+            <p id="modal-req-title" style="font-weight: bold; color: var(--primary);"></p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label>שם מלא:</label>
+                <input type="text" id="vol-name" placeholder="השם שלך">
+                <label>כיתה:</label>
+                <input type="text" id="vol-class" placeholder="למשל: י' 2">
+                <label>מתי אני פנוי/ה?</label>
+                <textarea id="vol-availability" rows="2" placeholder="למשל: מחר בהפסקה הגדולה"></textarea>
+                <button class="btn btn-primary" onclick="submitVolunteer()">שלח הצעה לעזרה</button>
+                <button class="btn" onclick="closeModal()">ביטול</button>
+            </div>
+        </div>
+    </div>
 
     <section id="login-screen">
         <div class="login-card">
@@ -138,7 +168,7 @@
             
             <div id="page-dashboard" class="page active">
                 <div class="hero">
-                    <h2>לוח המשימות של טוביהו</h2>
+                    <h2>לוח הבקשות של טוביהו</h2>
                     <p>כאן מופיעות כל הבקשות שפורסמו בקהילה.</p>
                 </div>
                 <div id="main-grid" class="request-grid">
@@ -190,6 +220,11 @@
 
             <div id="page-admin" class="page">
                 <div class="card">
+                    <h2>פאנל ניהול - אישורי מנהלת</h2>
+                    <div id="admin-approvals" class="request-grid">
+                        <p style="color: var(--gray)">אין בקשות הממתינות לאישור כרגע.</p>
+                    </div>
+                    <hr style="margin: 30px 0;">
                     <h3>ניהול מערכת</h3>
                     <button class="btn btn-dark" onclick="generateSourceCode()">ייצא קוד לעדכון GitHub</button>
                     <textarea id="code-exporter" readonly></textarea>
@@ -200,7 +235,10 @@
     </div>
 
     <script>
-        // אתחול אפליקציה
+        let requests = [];
+        let pendingVolunteers = [];
+        let currentActiveRequestId = null;
+
         function initApp() {
             const email = document.getElementById('userEmail').value;
             if(email.includes('@')) {
@@ -208,54 +246,112 @@
                 document.getElementById('app').style.display = 'block';
                 document.getElementById('display-name').innerText = email.split('@')[0];
                 document.body.style.backgroundColor = 'var(--bg)';
+                renderDashboard();
             }
         }
 
-        // ניווט בין דפים
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
             document.getElementById('nav-' + pageId).classList.add('active');
+            if(pageId === 'admin') renderAdmin();
         }
 
-        // פונקציית פרסום בקשה
         function publishRequest() {
-            // איסוף נתונים מהטופס
-            const name = document.getElementById('req-name').value;
-            const className = document.getElementById('req-class').value;
-            const role = document.getElementById('req-role').value;
-            const category = document.getElementById('req-category').value;
-            const title = document.getElementById('req-title').value;
-            const desc = document.getElementById('req-desc').value;
+            const req = {
+                id: Date.now(),
+                name: document.getElementById('req-name').value,
+                className: document.getElementById('req-class').value,
+                role: document.getElementById('req-role').value,
+                category: document.getElementById('req-category').value,
+                title: document.getElementById('req-title').value,
+                desc: document.getElementById('req-desc').value,
+                status: 'ממתין לעזרה'
+            };
 
-            if(!title || !desc) return alert("נא למלא כותרת ותיאור");
+            if(!req.title || !req.desc) return alert("נא למלא כותרת ותיאור");
 
-            // יצירת האלמנט בלוח
-            const grid = document.getElementById('main-grid');
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <span class="category-tag">${category}</span>
-                <div class="status-badge status-pending">ממתין לעזרה</div>
-                <h3 style="margin: 10px 0;">${title}</h3>
-                <p style="font-size: 0.9rem; color: var(--gray);">${desc}</p>
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-                <div style="font-size: 0.8rem; font-weight: bold;">
-                    מאת: ${name} (${role}) | כיתה: ${className}
-                </div>
-                <button class="btn btn-dark" style="width: 100%; margin-top: 15px; font-size: 0.8rem;">אני רוצה לעזור</button>
-            `;
-
-            // הוספה ללוח ומעבר דף
-            grid.prepend(card);
+            requests.unshift(req);
             alert("הבקשה פורסמה בהצלחה!");
-            
-            // ניקוי טופס
-            document.getElementById('req-title').value = "";
-            document.getElementById('req-desc').value = "";
-            
             showPage('dashboard');
+            renderDashboard();
+        }
+
+        function renderDashboard() {
+            const grid = document.getElementById('main-grid');
+            grid.innerHTML = requests.map(req => `
+                <div class="card">
+                    <span class="category-tag">${req.category}</span>
+                    <div class="status-badge ${req.status === 'ממתין לעזרה' ? 'status-pending' : 'status-waiting'}">
+                        ${req.status}
+                    </div>
+                    <h3>${req.title}</h3>
+                    <p>${req.desc}</p>
+                    <div style="font-size: 0.8rem; font-weight: bold;">מאת: ${req.name} | כיתה: ${req.className}</div>
+                    ${req.status === 'ממתין לעזרה' ? 
+                        `<button class="btn btn-dark" style="width: 100%; margin-top: 15px;" onclick="openVolunteerModal(${req.id}, '${req.title}')">אני רוצה לעזור</button>` : 
+                        `<div style="color: var(--success); margin-top: 10px; font-weight:bold;">✅ בטיפול המנהלת</div>`}
+                </div>
+            `).join('');
+        }
+
+        function openVolunteerModal(id, title) {
+            currentActiveRequestId = id;
+            document.getElementById('modal-req-title').innerText = "עבור: " + title;
+            document.getElementById('volunteer-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('volunteer-modal').style.display = 'none';
+        }
+
+        function submitVolunteer() {
+            const vol = {
+                reqId: currentActiveRequestId,
+                volName: document.getElementById('vol-name').value,
+                volClass: document.getElementById('vol-class').value,
+                availability: document.getElementById('vol-availability').value
+            };
+
+            if(!vol.volName) return alert("נא למלא שם");
+
+            pendingVolunteers.push(vol);
+            
+            // עדכון סטטוס הבקשה
+            const req = requests.find(r => r.id === currentActiveRequestId);
+            req.status = "ממתין לאישור מנהלת";
+
+            alert("הצעת העזרה נשלחה למנהלת!");
+            closeModal();
+            renderDashboard();
+        }
+
+        function renderAdmin() {
+            const adminDiv = document.getElementById('admin-approvals');
+            if(pendingVolunteers.length === 0) {
+                adminDiv.innerHTML = '<p style="color: var(--gray)">אין בקשות הממתינות לאישור כרגע.</p>';
+                return;
+            }
+
+            adminDiv.innerHTML = pendingVolunteers.map((vol, index) => {
+                const req = requests.find(r => r.id === vol.reqId);
+                return `
+                    <div class="card" style="border: 2px solid var(--primary)">
+                        <h4 style="margin:0">בקשת אישור מאץ' 🤝</h4>
+                        <p><strong>הבקשה:</strong> ${req.title}</p>
+                        <p><strong>המתנדב/ת:</strong> ${vol.volName} (כיתה ${vol.volClass})</p>
+                        <p><strong>זמינות:</strong> ${vol.availability}</p>
+                        <button class="btn btn-success" onclick="approveMatch(${index})">אשר מאץ'</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function approveMatch(index) {
+            alert("המאץ' אושר בהצלחה! הודעה נשלחה לצדדים (סימולציה).");
+            pendingVolunteers.splice(index, 1);
+            renderAdmin();
         }
 
         function generateSourceCode() {
