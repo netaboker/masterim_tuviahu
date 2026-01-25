@@ -3,31 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>המאסטרים של טוביהו - קהילה שיתופית</title>
+    <title>המאסטרים של טוביהו - מערכת תגמולים</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1; /* סגול מודרני */
-            --secondary: #ec4899; /* ורוד מומחים */
-            --dark: #1e293b;
-            --bg: #f1f5f9;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --danger: #ef4444;
+            --primary: #6366f1; --secondary: #ec4899; --dark: #1e293b;
+            --bg: #f1f5f9; --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
             --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        body {
-            font-family: 'Assistant', sans-serif;
-            margin: 0; background: var(--bg); color: var(--dark);
-            line-height: 1.5; overflow-x: hidden;
-        }
+        body { font-family: 'Assistant', sans-serif; margin: 0; background: var(--bg); color: var(--dark); line-height: 1.5; }
 
-        /* --- Header & Nav --- */
-        header {
-            background: white; padding: 10px 20px; border-bottom: 2px solid #e2e8f0;
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
+        header { background: white; padding: 10px 20px; border-bottom: 2px solid #e2e8f0; position: sticky; top: 0; z-index: 1000; }
         .header-main { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
         .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 800; font-size: 1.4rem; color: var(--primary); }
         
@@ -36,148 +23,102 @@
         nav a { 
             text-decoration: none; color: var(--dark); font-weight: 600; padding: 8px 16px; 
             border-radius: 50px; white-space: nowrap; font-size: 0.95rem; transition: 0.3s;
-            background: #f8fafc; border: 1px solid #e2e8f0;
+            background: #f8fafc; border: 1px solid #e2e8f0; cursor: pointer;
         }
         nav a.active { background: var(--primary); color: white; border-color: var(--primary); }
-        nav a.expert-nav.active { background: var(--secondary); border-color: var(--secondary); }
 
-        /* --- UI Components --- */
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
         .page { display: none; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .hero { 
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); 
-            padding: 40px 20px; border-radius: 24px; color: white; text-align: center; margin-bottom: 30px;
-            box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.3);
-        }
+        /* Profile Styles */
+        .profile-header { background: white; padding: 30px; border-radius: 24px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 20px; }
+        .points-badge { font-size: 3rem; font-weight: 800; color: var(--primary); margin: 10px 0; }
+        .progress-container { background: #e2e8f0; height: 12px; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        .progress-bar { background: var(--success); height: 100%; transition: width 0.5s ease; }
 
-        /* --- Cards Grid --- */
+        /* Grid & Cards */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .card { 
-            background: white; border-radius: 20px; padding: 20px; position: relative;
-            box-shadow: var(--card-shadow); border: 1px solid #f1f5f9; transition: transform 0.2s;
-        }
-        .card:hover { transform: translateY(-5px); }
-        .card-tag { 
-            position: absolute; top: 15px; left: 15px; padding: 4px 12px; 
-            border-radius: 50px; font-size: 0.75rem; font-weight: 700; 
-        }
-        .tag-help { background: #e0e7ff; color: var(--primary); }
-        .tag-expert { background: #fdf2f8; color: var(--secondary); }
+        .card { background: white; border-radius: 20px; padding: 20px; position: relative; box-shadow: var(--card-shadow); }
+        .points-tag { position: absolute; top: 15px; left: 15px; background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; }
 
-        .btn { 
-            width: 100%; border: none; padding: 12px; border-radius: 12px; 
-            font-weight: 700; cursor: pointer; transition: 0.2s; font-family: inherit; font-size: 1rem;
-        }
+        .btn { width: 100%; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 1rem; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: var(--secondary); color: white; }
-        .btn-outline { background: transparent; border: 2px solid #e2e8f0; color: var(--dark); margin-top: 10px; }
-
-        /* --- Forms --- */
-        .form-card { background: white; padding: 30px; border-radius: 24px; max-width: 600px; margin: 0 auto; box-shadow: var(--card-shadow); }
-        input, select, textarea { 
-            width: 100%; padding: 14px; border: 2px solid #f1f5f9; border-radius: 12px; 
-            margin-bottom: 15px; font-family: inherit; font-size: 1rem; box-sizing: border-box;
-        }
-        label { font-weight: 700; display: block; margin-bottom: 5px; }
-
-        /* --- Modal --- */
-        .modal { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); 
-            z-index: 2000; align-items: flex-end; justify-content: center;
-        }
-        .modal-content { background: white; width: 100%; padding: 30px; border-radius: 30px 30px 0 0; max-width: 500px; }
-
-        /* Mobile specific adjustments */
-        @media (min-width: 768px) {
-            .modal { align-items: center; }
-            .modal-content { border-radius: 24px; }
-        }
-
+        .btn-success { background: var(--success); color: white; }
+        
         #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--primary); padding: 20px; }
+        input, select, textarea { width: 100%; padding: 14px; border: 2px solid #f1f5f9; border-radius: 12px; margin-bottom: 15px; font-family: inherit; box-sizing: border-box; }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: white; width: 100%; max-width: 500px; padding: 30px; border-radius: 24px; }
     </style>
 </head>
 <body onload="checkLoginStatus()">
 
     <section id="login-screen">
-        <div class="form-card" style="text-align: center; width: 100%;">
+        <div style="background: white; padding: 30px; border-radius: 24px; text-align: center; max-width: 400px; width:100%">
             <span style="font-size: 4rem;">👑</span>
-            <h1 style="margin: 10px 0;">המאסטרים של טוביהו</h1>
-            <p style="color: #64748b; margin-bottom: 30px;">התחברו כדי להתחיל לעזור ולהיעזר</p>
+            <h1>המאסטרים של טוביהו</h1>
             <input type="email" id="userEmail" placeholder="name@school.edu.il">
-            <button class="btn btn-primary" onclick="initApp()">כניסה לקהילה</button>
+            <button class="btn btn-primary" onclick="initApp()">כניסה</button>
         </div>
     </section>
 
-    <div id="app">
+    <div id="app" style="display:none">
         <header>
             <div class="header-main">
                 <div class="logo" onclick="showPage('dashboard')">👑 המאסטרים</div>
-                <div id="user-badge" style="background: #f1f5f9; padding: 5px 15px; border-radius: 50px; display: flex; align-items: center; gap: 10px;">
-                    <span id="display-name" style="font-weight: 700; font-size: 0.9rem;"></span>
-                    <button onclick="logout()" style="border:none; background:none; cursor:pointer; font-size:1.1rem">🚪</button>
+                <div onclick="showPage('profile')" style="cursor:pointer; background: #f1f5f9; padding: 5px 15px; border-radius: 50px; font-weight:700">
+                    👤 <span id="display-name"></span>
                 </div>
             </div>
         </header>
         
-        <nav id="main-nav">
+        <nav>
             <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">לוח בקשות 🤝</a>
-            <a onclick="showPage('experts')" id="nav-experts" class="expert-nav">לוח מומחים 🎓</a>
+            <a onclick="showPage('profile')" id="nav-profile">הפרופיל שלי 👤</a>
             <a onclick="showPage('new-request')" id="nav-new-request">בקשה חדשה +</a>
-            <a onclick="showPage('new-expert')" id="nav-new-expert">פרסום מומחיות 🌟</a>
-            <a onclick="showPage('admin')" id="nav-admin" style="color: var(--danger);">פאנל ניהול 🛠️</a>
+            <a onclick="showPage('admin')" id="nav-admin" style="color: var(--danger);">ניהול 🛠️</a>
         </nav>
 
         <div class="container">
             
             <div id="page-dashboard" class="page active">
-                <div class="hero">
-                    <h2>צריכים עזרה במשהו?</h2>
-                    <p>צפו בבקשות של חברים וגלו איפה אתם יכולים לתת יד.</p>
-                </div>
-                <div id="request-grid" class="grid"></div>
+                <div class="grid" id="request-grid"></div>
             </div>
 
-            <div id="page-experts" class="page">
-                <div class="hero" style="background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);">
-                    <h2>נבחרת המומחים שלנו</h2>
-                    <p>תלמידים שמוכנים לחלוק מהידע שלהם. אל תהססו לפנות!</p>
+            <div id="page-profile" class="page">
+                <div class="profile-header">
+                    <div style="font-size: 1.2rem; font-weight: 700;">שלום, <span id="prof-name"></span>!</div>
+                    <div class="points-badge"><span id="user-points">0</span></div>
+                    <div style="font-weight: 700; color: var(--gray);">נקודות מעורבות</div>
+                    
+                    <div class="progress-container">
+                        <div id="prof-bar" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div id="rank-text" style="font-weight: 800; color: var(--primary);">מאסטר מתחיל</div>
                 </div>
-                <div id="expert-grid" class="grid"></div>
+
+                <h3>הפעילות שלי</h3>
+                <div id="my-activity" class="grid"></div>
             </div>
 
             <div id="page-new-request" class="page">
-                <div class="form-card">
-                    <h2>מה הצורך שלך?</h2>
-                    <label>כותרת קצרה</label>
-                    <input type="text" id="req-title" placeholder="למשל: עזרה במתמטיקה יחידה 4">
-                    <label>סוג הבקשה</label>
-                    <select id="req-type">
-                        <option>לימודי</option>
-                        <option>טכני/לוגיסטי</option>
-                        <option>חברתי/עיצובי</option>
-                    </select>
-                    <label>תיאור מפורט</label>
-                    <textarea id="req-desc" rows="4" placeholder="פרטו כאן מה בדיוק אתם צריכים..."></textarea>
-                    <button class="btn btn-primary" onclick="publishRequest()">פרסם בקשה</button>
-                </div>
-            </div>
-
-            <div id="page-new-expert" class="page">
-                <div class="form-card">
-                    <h2 style="color: var(--secondary);">במה אתם מאסטרים?</h2>
-                    <label>תחום המומחיות</label>
-                    <input type="text" id="exp-title" placeholder="למשל: עיצוב ב-Canva, גיטרה, אנגלית">
-                    <label>כמה מילים על הידע שלכם</label>
-                    <textarea id="exp-desc" rows="4" placeholder="כתבו איך תוכלו לעזור לאחרים..."></textarea>
-                    <button class="btn btn-secondary" onclick="publishExpert()">פרסם כרטיס מומחה</button>
+                <div style="background: white; padding: 30px; border-radius: 24px; max-width: 500px; margin: 0 auto;">
+                    <h2>פרסום בקשה</h2>
+                    <label>כותרת</label>
+                    <input type="text" id="req-title" placeholder="למשל: עזרה במתמטיקה">
+                    <label>תיאור</label>
+                    <textarea id="req-desc" rows="3"></textarea>
+                    <label>ניקוד למתנדב (10-50)</label>
+                    <input type="number" id="req-points" value="20" min="10" max="50">
+                    <button class="btn btn-primary" onclick="publishRequest()">פרסם וקבל עזרה</button>
                 </div>
             </div>
 
             <div id="page-admin" class="page">
-                <h2>ניהול בקשות ואישורים</h2>
+                <h2>אישורי מאץ' ותגמולים</h2>
                 <div id="admin-list" class="grid"></div>
             </div>
 
@@ -186,54 +127,50 @@
 
     <div id="volunteer-modal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title">אני רוצה לעזור!</h3>
-            <label>השם המלא שלך</label>
+            <h3 id="modal-title">התנדבות לבקשה</h3>
+            <label>השם שלך</label>
             <input type="text" id="vol-name">
-            <label>מתי נוח לך לדבר/להיפגש?</label>
-            <textarea id="vol-info" rows="3"></textarea>
-            <button class="btn btn-primary" onclick="submitMatch()">שלח בקשת מאץ'</button>
-            <button class="btn btn-outline" onclick="closeModal()">ביטול</button>
+            <label>זמינות (מתי נוח לך לעזור?)</label>
+            <textarea id="vol-info" rows="2"></textarea>
+            <button class="btn btn-primary" onclick="submitMatch()">שלח בקשה וצבור נקודות</button>
+            <button class="btn" onclick="closeModal()" style="margin-top:10px">ביטול</button>
         </div>
     </div>
 
     <script>
-        let data = {
+        // Data Store (Simulated)
+        let state = {
+            currentUser: { name: "", points: 0 },
             requests: [
-                { id: 1, title: "עזרה במשוואות", desc: "מחפש מישהו שיסביר לי נושא של משוואות ריבועיות לפני המבחן", name: "יוסי", status: "open", type: "לימודי" },
-                { id: 2, title: "העברת כיסאות", desc: "צריך עזרה בלהעביר כיסאות לאולם הספורט לקראת הטקס", name: "אב הבית", status: "open", type: "טכני" }
-            ],
-            experts: [
-                { id: 101, title: "מאסטר בקנבה", desc: "בונה מצגות וכרזות ברמה גבוהה מאוד", name: "נועה", type: "חברתי" }
+                { id: 1, title: "עזרה במתמטיקה", desc: "משוואות ריבועיות", name: "יוסי", points: 30, status: "open" },
+                { id: 2, title: "סידור ספרייה", desc: "עזרה בסידור ספרים חדשים", name: "המזכירות", points: 50, status: "open" }
             ],
             matches: []
         };
 
-        let currentTargetId = null;
-        let currentTargetType = null; // 'request' or 'expert'
-
         function checkLoginStatus() {
-            const user = localStorage.getItem('masterUser');
-            if (user) loginSuccess(user);
+            const saved = localStorage.getItem('master_user');
+            if (saved) {
+                state.currentUser = JSON.parse(saved);
+                loginSuccess();
+            }
         }
 
         function initApp() {
             const email = document.getElementById('userEmail').value;
             if (email.includes('@')) {
-                localStorage.setItem('masterUser', email);
-                loginSuccess(email);
+                state.currentUser.name = email.split('@')[0];
+                state.currentUser.points = 0;
+                localStorage.setItem('master_user', JSON.stringify(state.currentUser));
+                loginSuccess();
             }
         }
 
-        function loginSuccess(email) {
+        function loginSuccess() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'block';
-            document.getElementById('display-name').innerText = email.split('@')[0];
+            document.getElementById('display-name').innerText = state.currentUser.name;
             renderAll();
-        }
-
-        function logout() {
-            localStorage.removeItem('masterUser');
-            location.reload();
         }
 
         function showPage(pageId) {
@@ -241,120 +178,123 @@
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
             document.getElementById('nav-' + pageId).classList.add('active');
-            window.scrollTo(0,0);
+            if(pageId === 'profile') renderProfile();
         }
 
         function renderAll() {
             renderDashboard();
-            renderExperts();
             renderAdmin();
         }
 
         function renderDashboard() {
             const grid = document.getElementById('request-grid');
-            grid.innerHTML = data.requests.filter(r => r.status === 'open').map(r => `
+            grid.innerHTML = state.requests.filter(r => r.status === 'open').map(r => `
                 <div class="card">
-                    <span class="card-tag tag-help">${r.type}</span>
-                    <h3 style="margin-top:25px">${r.title}</h3>
-                    <p style="color:#64748b">${r.desc}</p>
-                    <div style="font-weight:700; font-size:0.8rem; margin-bottom:15px">פורסם על ידי: ${r.name}</div>
-                    <button class="btn btn-primary" onclick="openModal(${r.id}, 'request', '${r.title}')">אני רוצה לעזור</button>
+                    <div class="points-tag">💎 ${r.points} נק'</div>
+                    <h3 style="margin-top:20px">${r.title}</h3>
+                    <p>${r.desc}</p>
+                    <div style="font-size:0.8rem; margin-bottom:10px">מאת: ${r.name}</div>
+                    <button class="btn btn-primary" onclick="openVolunteerModal(${r.id}, '${r.title}')">אני רוצה לעזור</button>
                 </div>
             `).join('');
         }
 
-        function renderExperts() {
-            const grid = document.getElementById('expert-grid');
-            grid.innerHTML = data.experts.map(e => `
-                <div class="card">
-                    <span class="card-tag tag-expert">מומחה</span>
-                    <h3 style="margin-top:25px">${e.title}</h3>
-                    <p style="color:#64748b">${e.desc}</p>
-                    <div style="font-weight:700; font-size:0.8rem; margin-bottom:15px">המומחה: ${e.name}</div>
-                    <button class="btn btn-secondary" onclick="openModal(${e.id}, 'expert', '${e.name}')">בקשת עזרה ממומחה</button>
+        function renderProfile() {
+            document.getElementById('prof-name').innerText = state.currentUser.name;
+            document.getElementById('user-points').innerText = state.currentUser.points;
+            
+            // Progress Calculation
+            const levelMax = 200;
+            const progress = Math.min((state.currentUser.points / levelMax) * 100, 100);
+            document.getElementById('prof-bar').style.width = progress + '%';
+            
+            if(state.currentUser.points > 150) document.getElementById('rank-text').innerText = "מאסטר על! 🔥";
+            else if(state.currentUser.points > 50) document.getElementById('rank-text').innerText = "מתנדב פעיל ✨";
+
+            // Activity
+            const activityGrid = document.getElementById('my-activity');
+            const myRequests = state.requests.filter(r => r.name === state.currentUser.name);
+            const myVolunteering = state.matches.filter(m => m.volName === state.currentUser.name);
+            
+            activityGrid.innerHTML = [...myRequests, ...myVolunteering].map(item => `
+                <div class="card" style="border-right: 4px solid var(--primary)">
+                    <h4>${item.title || 'התנדבות'}</h4>
+                    <div style="font-size:0.8rem">${item.status === 'approved' ? '✅ הושלם' : '⏳ בטיפול'}</div>
                 </div>
-            `).join('');
+            `).join('') || '<p>עוד לא ביצעת פעילות במערכת.</p>';
         }
 
-        function openModal(id, type, title) {
-            currentTargetId = id;
-            currentTargetType = type;
-            document.getElementById('modal-title').innerText = type === 'request' ? `עזרה ב: ${title}` : `פנייה למומחה: ${title}`;
+        let currentId = null;
+        function openVolunteerModal(id, title) {
+            currentId = id;
             document.getElementById('volunteer-modal').style.display = 'flex';
         }
-
         function closeModal() { document.getElementById('volunteer-modal').style.display = 'none'; }
 
         function submitMatch() {
             const volName = document.getElementById('vol-name').value;
             const volInfo = document.getElementById('vol-info').value;
-            
-            if(!volName) return alert("נא למלא שם");
+            const req = state.requests.find(r => r.id === currentId);
 
-            data.matches.push({
+            state.matches.push({
                 id: Date.now(),
-                targetId: currentTargetId,
-                type: currentTargetType,
+                reqId: currentId,
                 volName,
                 volInfo,
+                points: req.points,
                 status: 'pending'
             });
 
-            if(currentTargetType === 'request') {
-                const req = data.requests.find(r => r.id === currentTargetId);
-                req.status = 'in-progress';
-            }
-
-            alert("הבקשה נשלחה לאישור המנהלת!");
+            req.status = 'pending_match';
+            alert("נשלח לאישור מנהלת!");
             closeModal();
             renderAll();
-            showPage('dashboard');
         }
 
         function renderAdmin() {
-            const grid = document.getElementById('admin-list');
-            const pendingMatches = data.matches.filter(m => m.status === 'pending');
+            const list = document.getElementById('admin-list');
+            const pending = state.matches.filter(m => m.status === 'pending');
             
-            grid.innerHTML = pendingMatches.length === 0 ? '<p>אין בקשות הממתינות לאישור.</p>' : pendingMatches.map(m => {
-                const target = m.type === 'request' ? data.requests.find(r => r.id === m.targetId) : data.experts.find(e => e.id === m.targetId);
+            list.innerHTML = pending.map(m => {
+                const req = state.requests.find(r => r.id === m.reqId);
                 return `
-                    <div class="card" style="border-right: 5px solid var(--warning)">
-                        <h4>בקשת חיבור (Match)</h4>
-                        <p><strong>בין:</strong> ${m.volName}</p>
-                        <p><strong>לבין:</strong> ${target.name} (${target.title})</p>
-                        <p><strong>פרטים:</strong> ${m.volInfo}</p>
-                        <div style="display:flex; gap:10px">
-                            <button class="btn btn-primary" style="background:var(--success)" onclick="approveMatch(${m.id})">אשר</button>
-                            <button class="btn btn-outline" style="color:var(--danger)" onclick="rejectMatch(${m.id})">דחה</button>
+                    <div class="card">
+                        <h3>אישור מאץ'</h3>
+                        <p><strong>${m.volName}</strong> רוצה לעזור ל-<strong>${req.name}</strong></p>
+                        <p>בנושא: ${req.title}</p>
+                        <div style="background:#f1f5f9; padding:10px; border-radius:10px; margin-bottom:10px">
+                            פרס תגמול: <strong>${m.points} נקודות</strong>
                         </div>
+                        <button class="btn btn-success" onclick="approveMatch(${m.id})">אשר ותגמל בנקודות</button>
                     </div>
                 `;
-            }).join('');
+            }).join('') || '<p>אין בקשות לאישור.</p>';
         }
 
-        function approveMatch(id) {
-            const m = data.matches.find(match => match.id === id);
-            m.status = 'approved';
-            alert("המאץ' אושר! הודעה נשלחה למשתתפים.");
+        function approveMatch(matchId) {
+            const match = state.matches.find(m => m.id === matchId);
+            match.status = 'approved';
+            
+            // גמול למתנדב (אם זה המשתמש הנוכחי)
+            if(match.volName === state.currentUser.name) {
+                state.currentUser.points += match.points;
+                localStorage.setItem('master_user', JSON.stringify(state.currentUser));
+            }
+
+            alert("המאץ' אושר והנקודות הוענקו!");
             renderAll();
         }
 
         function publishRequest() {
             const title = document.getElementById('req-title').value;
             const desc = document.getElementById('req-desc').value;
-            const type = document.getElementById('req-type').value;
-            if(!title) return;
-            data.requests.unshift({ id: Date.now(), title, desc, type, name: document.getElementById('display-name').innerText, status: 'open' });
+            const points = parseInt(document.getElementById('req-points').value);
+            
+            state.requests.unshift({
+                id: Date.now(), title, desc, points, name: state.currentUser.name, status: 'open'
+            });
+            
             showPage('dashboard');
-            renderAll();
-        }
-
-        function publishExpert() {
-            const title = document.getElementById('exp-title').value;
-            const desc = document.getElementById('exp-desc').value;
-            if(!title) return;
-            data.experts.unshift({ id: Date.now(), title, desc, name: document.getElementById('display-name').innerText });
-            showPage('experts');
             renderAll();
         }
     </script>
