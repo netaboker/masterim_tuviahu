@@ -7,260 +7,226 @@
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4f46e5;
-            --dark: #0f172a;
-            --bg: #f8fafc;
-            --gray: #64748b;
-            --light-gray: #f1f5f9;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
+            --primary: #4f46e5; --dark: #0f172a; --bg: #f8fafc;
+            --gray: #64748b; --light-gray: #f1f5f9;
+            --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
         }
 
-        body {
-            font-family: 'Assistant', sans-serif;
-            margin: 0;
-            background-color: var(--primary);
-            color: var(--dark);
-            transition: background 0.3s;
-        }
-
-        /* --- Login Screen --- */
-        #login-screen {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-card {
-            background: white;
-            padding: 40px;
-            border-radius: 24px;
-            width: 400px;
-            text-align: center;
-            box-shadow: 0 20px 25px rgba(0,0,0,0.1);
-        }
-
+        body { font-family: 'Assistant', sans-serif; margin: 0; background-color: var(--primary); color: var(--dark); }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; box-sizing: border-box; margin-top: 5px; }
-
-        /* --- Main App Container --- */
-        #app {
-            display: none;
-            background: var(--bg);
-            min-height: 100vh;
-        }
-
-        header {
-            background: white;
-            padding: 15px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--light-gray);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        nav { display: flex; gap: 30px; }
-        nav a { 
-            text-decoration: none; 
-            color: var(--gray); 
-            font-weight: 600; 
-            cursor: pointer;
-            padding: 10px 0;
-        }
+        .btn { padding: 12px 25px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-dark { background: var(--dark); color: white; }
+        .btn-primary { background: var(--primary); color: white; }
+        
+        #app { display: none; background: var(--bg); min-height: 100vh; }
+        header { background: white; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--light-gray); position: sticky; top: 0; z-index: 100; }
+        nav { display: flex; gap: 20px; }
+        nav a { text-decoration: none; color: var(--gray); font-weight: 600; cursor: pointer; padding: 10px 0; }
         nav a.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
-        nav a.admin-link { color: var(--danger); }
 
         .content-area { padding: 30px 50px; max-width: 1200px; margin: 0 auto; }
         .page { display: none; }
         .page.active { display: block; }
 
-        .hero {
-            background: linear-gradient(rgba(79, 70, 229, 0.9), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1000');
-            background-size: cover; background-position: center;
-            border-radius: 30px; padding: 60px; color: white; margin-bottom: 40px;
-        }
-
-        .request-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; }
+        .hero { background: linear-gradient(135deg, var(--primary), #6366f1); border-radius: 30px; padding: 40px; color: white; margin-bottom: 30px; }
+        .request-grid, .expert-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; }
         
-        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; }
-        .status-pending { background: #fef3c7; color: #92400e; }
-        
-        .category-tag { background: #e0e7ff; color: var(--primary); padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; float: left; }
+        /* Profile specific */
+        .profile-header { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 20px; text-align: center; }
+        .progress-bar { height: 12px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .progress-fill { height: 100%; background: var(--success); width: 0%; transition: 0.5s; }
 
-        .btn { 
-            padding: 12px 25px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; 
-            transition: 0.2s; font-family: inherit;
-        }
-        .btn-dark { background: var(--dark); color: white; }
-        .btn-primary { background: var(--primary); color: white; }
-        
-        #code-exporter { width: 100%; height: 200px; font-family: monospace; direction: ltr; background: #222; color: #fff; margin-top: 10px; }
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 20px; width: 400px; position: relative; }
 
+        .tag { font-size: 0.75rem; padding: 4px 8px; border-radius: 6px; font-weight: bold; }
+        .tag-blue { background: #dbeafe; color: #1e40af; }
     </style>
 </head>
 <body>
 
-    <section id="login-screen">
-        <div class="login-card">
-            <div style="font-size: 50px; margin-bottom: 10px;">👑</div>
-            <h1>המאסטרים של טוביהו</h1>
-            <p style="color: var(--gray)">התחברות למערכת</p>
-            <div style="margin: 30px 0; text-align: right;">
-                <label>אימייל</label>
-                <input type="email" id="userEmail" placeholder="name@school.edu.il">
-            </div>
-            <button class="btn btn-dark" style="width: 100%;" onclick="initApp()">כניסה</button>
+    <section id="login-screen" style="height:100vh; display:flex; justify-content:center; align-items:center;">
+        <div style="background:white; padding:40px; border-radius:24px; width:350px; text-align:center;">
+            <h1>👑 המאסטרים</h1>
+            <input type="email" id="userEmail" placeholder="אימייל">
+            <button class="btn btn-dark" style="width:100%; margin-top:20px;" onclick="initApp()">כניסה</button>
         </div>
     </section>
 
     <div id="app">
         <header>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 24px;">👑</span>
-                <h2 style="margin: 0;">המאסטרים</h2>
-            </div>
             <nav>
                 <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">לוח בקשות</a>
+                <a onclick="showPage('experts')" id="nav-experts">לוח מומחים</a>
                 <a onclick="showPage('new-request')" id="nav-new-request">בקשה חדשה</a>
-                <a onclick="showPage('admin')" id="nav-admin" class="admin-link">פאנל ניהול</a>
+                <a onclick="showPage('profile')" id="nav-profile">פרופיל אישי</a>
             </nav>
-            <div id="user-info" style="text-align: left;">
-                <div id="display-name" style="font-weight: bold;">משתמש</div>
-            </div>
+            <div id="display-name" style="font-weight:bold;">שלום, אורח</div>
         </header>
 
         <div class="content-area">
             
             <div id="page-dashboard" class="page active">
                 <div class="hero">
-                    <h2>לוח המשימות של טוביהו</h2>
-                    <p>כאן מופיעות כל הבקשות שפורסמו בקהילה.</p>
+                    <h2>לוח הבקשות של טוביהו</h2>
+                    <p>קהילה שעוזרת אחד לשנייה. מצאו בקשה והתנדבו!</p>
                 </div>
-                <div id="main-grid" class="request-grid">
+                <div id="main-grid" class="request-grid"></div>
+            </div>
+
+            <div id="page-experts" class="page">
+                <div class="hero" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <h2>לוח המומחים של טוביהו</h2>
+                    <p>תלמידים שמומחים בתחומם ומציעים עזרה קבועה.</p>
+                    <button class="btn btn-dark" onclick="openExpertModal()">הצע את עצמך כמומחה</button>
+                </div>
+                <div id="expert-grid" class="expert-grid"></div>
+            </div>
+
+            <div id="page-profile" class="page">
+                <div class="profile-header">
+                    <div class="stat-card">
+                        <div style="font-size: 40px;">🏅</div>
+                        <h3 id="prof-name">שם המשתמש</h3>
+                        <p id="prof-class">כיתה</p>
+                        <div class="progress-bar"><div id="rank-progress" class="progress-fill"></div></div>
+                        <p id="rank-text" style="font-weight:bold; color:var(--primary);">מתחיל</p>
                     </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                        <div class="stat-card"><h4>נקודות שנצברו</h4><h2 id="total-points">0</h2></div>
+                        <div class="stat-card"><h4>התנדבויות</h4><h2 id="total-vol">0</h2></div>
+                    </div>
+                </div>
+                <h3>הפעילות שלי</h3>
+                <div id="my-activity-grid" class="request-grid"></div>
             </div>
 
             <div id="page-new-request" class="page">
-                <div class="card" style="max-width: 600px; margin: 0 auto;">
-                    <h2>פרסום בקשה חדשה</h2>
-                    <div style="text-align: right; display: grid; gap: 15px;">
-                        <div>
-                            <label>שם מלא</label>
-                            <input type="text" id="req-name" placeholder="השם שלך">
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div>
-                                <label>כיתה</label>
-                                <input type="text" id="req-class" placeholder="למשל: י' 2">
-                            </div>
-                            <div>
-                                <label>תפקיד</label>
-                                <select id="req-role">
-                                    <option>תלמיד/ה</option>
-                                    <option>מורה</option>
-                                    <option>איש צוות/מנהלה</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label>קטגוריה</label>
-                            <select id="req-category">
-                                <option>לימודית</option>
-                                <option>חברתית</option>
-                                <option>טכנית/לוגיסטית</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>כותרת הבקשה</label>
-                            <input type="text" id="req-title" placeholder="מה הצורך בקצרה?">
-                        </div>
-                        <div>
-                            <label>תיאור מפורט</label>
-                            <textarea id="req-desc" rows="4" placeholder="פרט כאן מה בדיוק אתה צריך..."></textarea>
-                        </div>
-                        <button class="btn btn-primary" onclick="publishRequest()">פרסם בקשה עכשיו</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="page-admin" class="page">
-                <div class="card">
-                    <h3>ניהול מערכת</h3>
-                    <button class="btn btn-dark" onclick="generateSourceCode()">ייצא קוד לעדכון GitHub</button>
-                    <textarea id="code-exporter" readonly></textarea>
+                <div class="card" style="max-width:500px; margin:0 auto;">
+                    <h2>פרסום בקשה</h2>
+                    <input type="text" id="req-title" placeholder="כותרת (למשל: עזרה באנגלית)">
+                    <select id="req-cat"><option>לימודית</option><option>חברתית</option><option>טכנית</option></select>
+                    <textarea id="req-desc" rows="3" placeholder="פירוט..."></textarea>
+                    <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="publishRequest()">פרסם</button>
                 </div>
             </div>
 
         </div>
     </div>
 
+    <div id="vol-modal" class="modal">
+        <div class="modal-content">
+            <h3>אני רוצה לעזור!</h3>
+            <input type="text" id="vol-name" placeholder="השם שלך">
+            <input type="text" id="vol-class" placeholder="כיתה">
+            <textarea id="vol-time" placeholder="מתי אתה פנוי לעזור?"></textarea>
+            <button class="btn btn-success" style="width:100%; margin-top:15px; background:var(--success); color:white;" onclick="confirmVol()">שלח הצעה למנהלת</button>
+            <button class="btn" style="width:100%;" onclick="closeModal()">ביטול</button>
+        </div>
+    </div>
+
     <script>
-        // אתחול אפליקציה
+        let currentUser = { email: '', points: 0, activities: [] };
+        let currentTargetId = null;
+
         function initApp() {
             const email = document.getElementById('userEmail').value;
-            if(email.includes('@')) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('app').style.display = 'block';
-                document.getElementById('display-name').innerText = email.split('@')[0];
-                document.body.style.backgroundColor = 'var(--bg)';
-            }
+            if(!email) return alert("הכנס מייל");
+            currentUser.email = email;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            document.getElementById('display-name').innerText = "שלום, " + email.split('@')[0];
+            document.getElementById('prof-name').innerText = email.split('@')[0];
+            updateProfile();
+            renderBoards();
         }
 
-        // ניווט בין דפים
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        function showPage(p) {
+            document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-            document.getElementById('nav-' + pageId).classList.add('active');
+            document.getElementById('page-'+p).classList.add('active');
+            document.getElementById('nav-'+p).classList.add('active');
         }
 
-        // פונקציית פרסום בקשה
         function publishRequest() {
-            // איסוף נתונים מהטופס
-            const name = document.getElementById('req-name').value;
-            const className = document.getElementById('req-class').value;
-            const role = document.getElementById('req-role').value;
-            const category = document.getElementById('req-category').value;
             const title = document.getElementById('req-title').value;
             const desc = document.getElementById('req-desc').value;
-
-            if(!title || !desc) return alert("נא למלא כותרת ותיאור");
-
-            // יצירת האלמנט בלוח
-            const grid = document.getElementById('main-grid');
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <span class="category-tag">${category}</span>
-                <div class="status-badge status-pending">ממתין לעזרה</div>
-                <h3 style="margin: 10px 0;">${title}</h3>
-                <p style="font-size: 0.9rem; color: var(--gray);">${desc}</p>
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-                <div style="font-size: 0.8rem; font-weight: bold;">
-                    מאת: ${name} (${role}) | כיתה: ${className}
-                </div>
-                <button class="btn btn-dark" style="width: 100%; margin-top: 15px; font-size: 0.8rem;">אני רוצה לעזור</button>
-            `;
-
-            // הוספה ללוח ומעבר דף
-            grid.prepend(card);
-            alert("הבקשה פורסמה בהצלחה!");
+            const cat = document.getElementById('req-cat').value;
             
-            // ניקוי טופס
-            document.getElementById('req-title').value = "";
-            document.getElementById('req-desc').value = "";
-            
+            const req = { id: Date.now(), title, desc, cat, type: 'בקשה שלי', status: 'פתוח' };
+            currentUser.activities.push(req);
+            alert("הבקשה פורסמה!");
+            renderBoards();
             showPage('dashboard');
         }
 
-        function generateSourceCode() {
-            document.getElementById('code-exporter').value = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+        function openVolModal(id) {
+            currentTargetId = id;
+            document.getElementById('vol-modal').style.display = 'block';
         }
+
+        function confirmVol() {
+            const volData = {
+                id: currentTargetId,
+                title: "התנדבות בטיפול",
+                status: "בטיפול (ממתין לאישור מנהלת)",
+                type: 'התנדבות'
+            };
+            currentUser.activities.push(volData);
+            currentUser.points += 20; // תוספת נקודות
+            alert("הבקשה נשלחה למנהלת!");
+            closeModal();
+            updateProfile();
+            showPage('profile');
+        }
+
+        function updateProfile() {
+            document.getElementById('total-points').innerText = currentUser.points;
+            const count = currentUser.activities.filter(a => a.type === 'התנדבות').length;
+            document.getElementById('total-vol').innerText = count;
+            
+            // מד מעורבות
+            const progress = Math.min(currentUser.points, 100);
+            document.getElementById('rank-progress').style.width = progress + "%";
+            if(currentUser.points > 80) document.getElementById('rank-text').innerText = "מאסטר קהילתי";
+            else if(currentUser.points > 40) document.getElementById('rank-text').innerText = "פעיל חברתי";
+
+            // רנדור פעילות בפרופיל
+            const container = document.getElementById('my-activity-grid');
+            container.innerHTML = currentUser.activities.map(a => `
+                <div class="card">
+                    <span class="tag tag-blue">${a.type}</span>
+                    <h4>${a.title}</h4>
+                    <p style="color:var(--warning)">סטטוס: ${a.status}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderBoards() {
+            const grid = document.getElementById('main-grid');
+            // כאן אפשר להוסיף בקשות דמה או לשאוב מה-Database
+            grid.innerHTML = `
+                <div class="card">
+                    <span class="tag tag-blue">לימודי</span>
+                    <h3>עזרה במצגת קנבה</h3>
+                    <p>צריך מישהו שיעזור לי לעצב מצגת להיסטוריה.</p>
+                    <button class="btn btn-dark" style="width:100%" onclick="openVolModal(1)">אני רוצה לעזור</button>
+                </div>
+            `;
+            
+            document.getElementById('expert-grid').innerHTML = `
+                <div class="card" style="border-top: 5px solid #10b981;">
+                    <h3>דניאל - מומחה מתמטיקה</h3>
+                    <p>עוזר ב-5 יחידות, פונקציות ווקטורים.</p>
+                    <button class="btn btn-primary" style="width:100%">בקש עזרה מהמומחה</button>
+                </div>
+            `;
+        }
+
+        function closeModal() { document.getElementById('vol-modal').style.display = 'none'; }
     </script>
 </body>
 </html>
