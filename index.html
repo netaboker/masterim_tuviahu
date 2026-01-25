@@ -3,133 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>המאסטרים של טוביהו - פאנל ניהול</title>
+    <title>המאסטרים של טוביהו - קהילה שיתופית</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4f46e5; --dark: #0f172a; --bg: #f8fafc;
-            --gray: #64748b; --light-gray: #e2e8f0;
-            --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+            --primary: #6366f1; /* סגול מודרני */
+            --secondary: #ec4899; /* ורוד מומחים */
+            --dark: #1e293b;
+            --bg: #f1f5f9;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        body { font-family: 'Assistant', sans-serif; margin: 0; background-color: var(--primary); color: var(--dark); }
-        
-        #app { display: none; background: var(--bg); min-height: 100vh; }
+        body {
+            font-family: 'Assistant', sans-serif;
+            margin: 0; background: var(--bg); color: var(--dark);
+            line-height: 1.5; overflow-x: hidden;
+        }
 
+        /* --- Header & Nav --- */
         header {
-            background: white; padding: 10px 20px; display: flex; flex-direction: column;
-            border-bottom: 1px solid var(--light-gray); position: sticky; top: 0; z-index: 100;
+            background: white; padding: 10px 20px; border-bottom: 2px solid #e2e8f0;
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
-
-        .header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; padding-bottom: 10px; }
-        .logo-area { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .header-main { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 800; font-size: 1.4rem; color: var(--primary); }
         
-        nav { display: flex; gap: 15px; overflow-x: auto; width: 100%; padding-bottom: 5px; }
-        nav a { text-decoration: none; color: var(--gray); font-weight: 600; white-space: nowrap; padding: 8px 5px; cursor: pointer; }
-        nav a.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+        nav { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; max-width: 1200px; margin: 0 auto; scrollbar-width: none; }
+        nav::-webkit-scrollbar { display: none; }
+        nav a { 
+            text-decoration: none; color: var(--dark); font-weight: 600; padding: 8px 16px; 
+            border-radius: 50px; white-space: nowrap; font-size: 0.95rem; transition: 0.3s;
+            background: #f8fafc; border: 1px solid #e2e8f0;
+        }
+        nav a.active { background: var(--primary); color: white; border-color: var(--primary); }
+        nav a.expert-nav.active { background: var(--secondary); border-color: var(--secondary); }
 
-        .content-area { padding: 20px; max-width: 1000px; margin: 0 auto; }
-        .page { display: none; }
+        /* --- UI Components --- */
+        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .page { display: none; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Admin Cards */
-        .admin-card { background: white; padding: 20px; border-radius: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.03); border: 1px solid var(--light-gray); margin-bottom: 20px; }
-        .match-info { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0; background: var(--bg); padding: 15px; border-radius: 12px; }
-        
-        .btn { padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; width: 100%; }
-        .btn-success { background: var(--success); color: white; margin-bottom: 8px; }
-        .btn-danger { background: #fee2e2; color: var(--danger); }
-        
-        .history-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
-        .badge-approved { background: #dcfce7; color: #166534; }
-        .badge-rejected { background: #fee2e2; color: #991b1b; }
-
-        /* Login */
-        #login-screen { height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .login-card { background: white; padding: 30px; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--light-gray); border-radius: 10px; margin: 10px 0; box-sizing: border-box; }
-
-        @media (min-width: 768px) {
-            header { flex-direction: row; padding: 15px 50px; }
-            .header-top { width: auto; padding: 0; }
-            nav { width: auto; gap: 30px; margin-right: 40px; }
-            .btn-group { display: flex; gap: 10px; }
-            .btn-success, .btn-danger { margin-bottom: 0; }
+        .hero { 
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); 
+            padding: 40px 20px; border-radius: 24px; color: white; text-align: center; margin-bottom: 30px;
+            box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.3);
         }
+
+        /* --- Cards Grid --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { 
+            background: white; border-radius: 20px; padding: 20px; position: relative;
+            box-shadow: var(--card-shadow); border: 1px solid #f1f5f9; transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card-tag { 
+            position: absolute; top: 15px; left: 15px; padding: 4px 12px; 
+            border-radius: 50px; font-size: 0.75rem; font-weight: 700; 
+        }
+        .tag-help { background: #e0e7ff; color: var(--primary); }
+        .tag-expert { background: #fdf2f8; color: var(--secondary); }
+
+        .btn { 
+            width: 100%; border: none; padding: 12px; border-radius: 12px; 
+            font-weight: 700; cursor: pointer; transition: 0.2s; font-family: inherit; font-size: 1rem;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-outline { background: transparent; border: 2px solid #e2e8f0; color: var(--dark); margin-top: 10px; }
+
+        /* --- Forms --- */
+        .form-card { background: white; padding: 30px; border-radius: 24px; max-width: 600px; margin: 0 auto; box-shadow: var(--card-shadow); }
+        input, select, textarea { 
+            width: 100%; padding: 14px; border: 2px solid #f1f5f9; border-radius: 12px; 
+            margin-bottom: 15px; font-family: inherit; font-size: 1rem; box-sizing: border-box;
+        }
+        label { font-weight: 700; display: block; margin-bottom: 5px; }
+
+        /* --- Modal --- */
+        .modal { 
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); 
+            z-index: 2000; align-items: flex-end; justify-content: center;
+        }
+        .modal-content { background: white; width: 100%; padding: 30px; border-radius: 30px 30px 0 0; max-width: 500px; }
+
+        /* Mobile specific adjustments */
+        @media (min-width: 768px) {
+            .modal { align-items: center; }
+            .modal-content { border-radius: 24px; }
+        }
+
+        #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--primary); padding: 20px; }
     </style>
 </head>
 <body onload="checkLoginStatus()">
 
     <section id="login-screen">
-        <div class="login-card">
-            <h1>👑 המאסטרים</h1>
-            <input type="email" id="userEmail" placeholder="אימייל">
-            <button class="btn" style="background:var(--dark); color:white" onclick="initApp()">כניסה</button>
+        <div class="form-card" style="text-align: center; width: 100%;">
+            <span style="font-size: 4rem;">👑</span>
+            <h1 style="margin: 10px 0;">המאסטרים של טוביהו</h1>
+            <p style="color: #64748b; margin-bottom: 30px;">התחברו כדי להתחיל לעזור ולהיעזר</p>
+            <input type="email" id="userEmail" placeholder="name@school.edu.il">
+            <button class="btn btn-primary" onclick="initApp()">כניסה לקהילה</button>
         </div>
     </section>
 
     <div id="app">
         <header>
-            <div class="header-top">
-                <div class="logo-area" onclick="showPage('dashboard')">
-                    <span style="font-size: 22px;">👑</span>
-                    <h2>המאסטרים</h2>
-                </div>
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <span id="display-name" style="font-weight:700"></span>
-                    <button onclick="handleLogout()" style="background:none; border:none; cursor:pointer; color:var(--danger)">יציאה</button>
+            <div class="header-main">
+                <div class="logo" onclick="showPage('dashboard')">👑 המאסטרים</div>
+                <div id="user-badge" style="background: #f1f5f9; padding: 5px 15px; border-radius: 50px; display: flex; align-items: center; gap: 10px;">
+                    <span id="display-name" style="font-weight: 700; font-size: 0.9rem;"></span>
+                    <button onclick="logout()" style="border:none; background:none; cursor:pointer; font-size:1.1rem">🚪</button>
                 </div>
             </div>
-            <nav>
-                <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">לוח בקשות</a>
-                <a onclick="showPage('new-request')" id="nav-new-request">בקשה חדשה</a>
-                <a onclick="showPage('admin')" id="nav-admin">פאנל ניהול</a>
-            </nav>
         </header>
+        
+        <nav id="main-nav">
+            <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">לוח בקשות 🤝</a>
+            <a onclick="showPage('experts')" id="nav-experts" class="expert-nav">לוח מומחים 🎓</a>
+            <a onclick="showPage('new-request')" id="nav-new-request">בקשה חדשה +</a>
+            <a onclick="showPage('new-expert')" id="nav-new-expert">פרסום מומחיות 🌟</a>
+            <a onclick="showPage('admin')" id="nav-admin" style="color: var(--danger);">פאנל ניהול 🛠️</a>
+        </nav>
 
-        <div class="content-area">
+        <div class="container">
             
             <div id="page-dashboard" class="page active">
-                <div id="main-grid"></div>
+                <div class="hero">
+                    <h2>צריכים עזרה במשהו?</h2>
+                    <p>צפו בבקשות של חברים וגלו איפה אתם יכולים לתת יד.</p>
+                </div>
+                <div id="request-grid" class="grid"></div>
             </div>
 
-            <div id="page-admin" class="page">
-                <h2 style="margin-bottom: 20px;">בקשות הממתיונות לאישור מאץ'</h2>
-                <div id="admin-pending-list">
-                    </div>
-
-                <h3 style="margin-top: 50px; border-top: 2px solid #ddd; padding-top: 20px;">היסטוריית החלטות</h3>
-                <div id="admin-history-list" class="admin-card" style="padding:0">
-                    </div>
+            <div id="page-experts" class="page">
+                <div class="hero" style="background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);">
+                    <h2>נבחרת המומחים שלנו</h2>
+                    <p>תלמידים שמוכנים לחלוק מהידע שלהם. אל תהססו לפנות!</p>
+                </div>
+                <div id="expert-grid" class="grid"></div>
             </div>
 
             <div id="page-new-request" class="page">
-                <div class="admin-card" style="max-width:500px; margin:0 auto;">
-                    <h2>פרסום בקשה</h2>
-                    <input type="text" id="req-name" placeholder="שם מלא">
-                    <input type="text" id="req-title" placeholder="כותרת הבקשה">
-                    <textarea id="req-desc" rows="3" placeholder="פירוט הבקשה..." style="width:100%; border-radius:10px; border:1px solid var(--light-gray); padding:10px;"></textarea>
-                    <button class="btn" style="background:var(--primary); color:white; margin-top:10px;" onclick="publishRequest()">פרסם</button>
+                <div class="form-card">
+                    <h2>מה הצורך שלך?</h2>
+                    <label>כותרת קצרה</label>
+                    <input type="text" id="req-title" placeholder="למשל: עזרה במתמטיקה יחידה 4">
+                    <label>סוג הבקשה</label>
+                    <select id="req-type">
+                        <option>לימודי</option>
+                        <option>טכני/לוגיסטי</option>
+                        <option>חברתי/עיצובי</option>
+                    </select>
+                    <label>תיאור מפורט</label>
+                    <textarea id="req-desc" rows="4" placeholder="פרטו כאן מה בדיוק אתם צריכים..."></textarea>
+                    <button class="btn btn-primary" onclick="publishRequest()">פרסם בקשה</button>
                 </div>
+            </div>
+
+            <div id="page-new-expert" class="page">
+                <div class="form-card">
+                    <h2 style="color: var(--secondary);">במה אתם מאסטרים?</h2>
+                    <label>תחום המומחיות</label>
+                    <input type="text" id="exp-title" placeholder="למשל: עיצוב ב-Canva, גיטרה, אנגלית">
+                    <label>כמה מילים על הידע שלכם</label>
+                    <textarea id="exp-desc" rows="4" placeholder="כתבו איך תוכלו לעזור לאחרים..."></textarea>
+                    <button class="btn btn-secondary" onclick="publishExpert()">פרסם כרטיס מומחה</button>
+                </div>
+            </div>
+
+            <div id="page-admin" class="page">
+                <h2>ניהול בקשות ואישורים</h2>
+                <div id="admin-list" class="grid"></div>
             </div>
 
         </div>
     </div>
 
+    <div id="volunteer-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">אני רוצה לעזור!</h3>
+            <label>השם המלא שלך</label>
+            <input type="text" id="vol-name">
+            <label>מתי נוח לך לדבר/להיפגש?</label>
+            <textarea id="vol-info" rows="3"></textarea>
+            <button class="btn btn-primary" onclick="submitMatch()">שלח בקשת מאץ'</button>
+            <button class="btn btn-outline" onclick="closeModal()">ביטול</button>
+        </div>
+    </div>
+
     <script>
-        let requests = [];
-        let matches = []; // { reqId, volName, volClass, volAvailability, status: 'pending'|'approved'|'rejected', reason: '' }
+        let data = {
+            requests: [
+                { id: 1, title: "עזרה במשוואות", desc: "מחפש מישהו שיסביר לי נושא של משוואות ריבועיות לפני המבחן", name: "יוסי", status: "open", type: "לימודי" },
+                { id: 2, title: "העברת כיסאות", desc: "צריך עזרה בלהעביר כיסאות לאולם הספורט לקראת הטקס", name: "אב הבית", status: "open", type: "טכני" }
+            ],
+            experts: [
+                { id: 101, title: "מאסטר בקנבה", desc: "בונה מצגות וכרזות ברמה גבוהה מאוד", name: "נועה", type: "חברתי" }
+            ],
+            matches: []
+        };
+
+        let currentTargetId = null;
+        let currentTargetType = null; // 'request' or 'expert'
 
         function checkLoginStatus() {
-            const user = localStorage.getItem('schoolMasterUser');
+            const user = localStorage.getItem('masterUser');
             if (user) loginSuccess(user);
         }
 
         function initApp() {
             const email = document.getElementById('userEmail').value;
             if (email.includes('@')) {
-                localStorage.setItem('schoolMasterUser', email);
+                localStorage.setItem('masterUser', email);
                 loginSuccess(email);
             }
         }
@@ -138,57 +228,135 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'block';
             document.getElementById('display-name').innerText = email.split('@')[0];
-            renderDashboard();
+            renderAll();
         }
 
-        function handleLogout() {
-            if(confirm("לצאת?")) { localStorage.removeItem('schoolMasterUser'); location.reload(); }
+        function logout() {
+            localStorage.removeItem('masterUser');
+            location.reload();
         }
 
-        function showPage(p) {
-            document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-            document.getElementById('page-'+p).classList.add('active');
-            if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active');
-            if(p === 'admin') renderAdmin();
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.getElementById('nav-' + pageId).classList.add('active');
+            window.scrollTo(0,0);
         }
 
-        function publishRequest() {
-            const req = {
-                id: Date.now(),
-                name: document.getElementById('req-name').value,
-                title: document.getElementById('req-title').value,
-                desc: document.getElementById('req-desc').value,
-                status: 'ממתין'
-            };
-            requests.unshift(req);
-            showPage('dashboard');
+        function renderAll() {
             renderDashboard();
+            renderExperts();
+            renderAdmin();
         }
 
         function renderDashboard() {
-            const grid = document.getElementById('main-grid');
-            grid.innerHTML = requests.map(r => `
-                <div class="admin-card">
-                    <h3>${r.title}</h3>
-                    <p>${r.desc}</p>
-                    <div style="font-size:0.8rem">מאת: ${r.name}</div>
-                    <button class="btn" style="background:var(--dark); color:white; margin-top:10px" onclick="simulateVolunteering(${r.id})">אני רוצה לעזור</button>
+            const grid = document.getElementById('request-grid');
+            grid.innerHTML = data.requests.filter(r => r.status === 'open').map(r => `
+                <div class="card">
+                    <span class="card-tag tag-help">${r.type}</span>
+                    <h3 style="margin-top:25px">${r.title}</h3>
+                    <p style="color:#64748b">${r.desc}</p>
+                    <div style="font-weight:700; font-size:0.8rem; margin-bottom:15px">פורסם על ידי: ${r.name}</div>
+                    <button class="btn btn-primary" onclick="openModal(${r.id}, 'request', '${r.title}')">אני רוצה לעזור</button>
                 </div>
             `).join('');
         }
 
-        // מדמה שליחת טופס מתנדב
-        function simulateVolunteering(id) {
-            const volName = prompt("שם המתנדב:");
-            if(!volName) return;
-            const volClass = prompt("כיתה:");
-            const volAvail = prompt("מתי פנוי?");
+        function renderExperts() {
+            const grid = document.getElementById('expert-grid');
+            grid.innerHTML = data.experts.map(e => `
+                <div class="card">
+                    <span class="card-tag tag-expert">מומחה</span>
+                    <h3 style="margin-top:25px">${e.title}</h3>
+                    <p style="color:#64748b">${e.desc}</p>
+                    <div style="font-weight:700; font-size:0.8rem; margin-bottom:15px">המומחה: ${e.name}</div>
+                    <button class="btn btn-secondary" onclick="openModal(${e.id}, 'expert', '${e.name}')">בקשת עזרה ממומחה</button>
+                </div>
+            `).join('');
+        }
+
+        function openModal(id, type, title) {
+            currentTargetId = id;
+            currentTargetType = type;
+            document.getElementById('modal-title').innerText = type === 'request' ? `עזרה ב: ${title}` : `פנייה למומחה: ${title}`;
+            document.getElementById('volunteer-modal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('volunteer-modal').style.display = 'none'; }
+
+        function submitMatch() {
+            const volName = document.getElementById('vol-name').value;
+            const volInfo = document.getElementById('vol-info').value;
             
-            matches.unshift({
+            if(!volName) return alert("נא למלא שם");
+
+            data.matches.push({
                 id: Date.now(),
-                reqId: id,
-                volName: volName,
-                volClass: volClass,
-                volAvailability: volAvail,
-                status:
+                targetId: currentTargetId,
+                type: currentTargetType,
+                volName,
+                volInfo,
+                status: 'pending'
+            });
+
+            if(currentTargetType === 'request') {
+                const req = data.requests.find(r => r.id === currentTargetId);
+                req.status = 'in-progress';
+            }
+
+            alert("הבקשה נשלחה לאישור המנהלת!");
+            closeModal();
+            renderAll();
+            showPage('dashboard');
+        }
+
+        function renderAdmin() {
+            const grid = document.getElementById('admin-list');
+            const pendingMatches = data.matches.filter(m => m.status === 'pending');
+            
+            grid.innerHTML = pendingMatches.length === 0 ? '<p>אין בקשות הממתינות לאישור.</p>' : pendingMatches.map(m => {
+                const target = m.type === 'request' ? data.requests.find(r => r.id === m.targetId) : data.experts.find(e => e.id === m.targetId);
+                return `
+                    <div class="card" style="border-right: 5px solid var(--warning)">
+                        <h4>בקשת חיבור (Match)</h4>
+                        <p><strong>בין:</strong> ${m.volName}</p>
+                        <p><strong>לבין:</strong> ${target.name} (${target.title})</p>
+                        <p><strong>פרטים:</strong> ${m.volInfo}</p>
+                        <div style="display:flex; gap:10px">
+                            <button class="btn btn-primary" style="background:var(--success)" onclick="approveMatch(${m.id})">אשר</button>
+                            <button class="btn btn-outline" style="color:var(--danger)" onclick="rejectMatch(${m.id})">דחה</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function approveMatch(id) {
+            const m = data.matches.find(match => match.id === id);
+            m.status = 'approved';
+            alert("המאץ' אושר! הודעה נשלחה למשתתפים.");
+            renderAll();
+        }
+
+        function publishRequest() {
+            const title = document.getElementById('req-title').value;
+            const desc = document.getElementById('req-desc').value;
+            const type = document.getElementById('req-type').value;
+            if(!title) return;
+            data.requests.unshift({ id: Date.now(), title, desc, type, name: document.getElementById('display-name').innerText, status: 'open' });
+            showPage('dashboard');
+            renderAll();
+        }
+
+        function publishExpert() {
+            const title = document.getElementById('exp-title').value;
+            const desc = document.getElementById('exp-desc').value;
+            if(!title) return;
+            data.experts.unshift({ id: Date.now(), title, desc, name: document.getElementById('display-name').innerText });
+            showPage('experts');
+            renderAll();
+        }
+    </script>
+</body>
+</html>
