@@ -3,86 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>המאסטרים של טוביהו - מערכת מלאה</title>
+    <title>המאסטרים של טוביהו - קהילה שיתופית</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1; --secondary: #ec4899; --dark: #1e293b;
-            --bg: #f1f5f9; --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
-            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --primary: #4f46e5; --secondary: #ec4899; --dark: #0f172a;
+            --bg: #f8fafc; --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
         body { font-family: 'Assistant', sans-serif; margin: 0; background: var(--bg); color: var(--dark); line-height: 1.5; }
 
-        header { background: white; padding: 10px 20px; border-bottom: 2px solid #e2e8f0; position: sticky; top: 0; z-index: 1000; }
+        /* Header & Logo */
+        header { background: white; padding: 15px 25px; border-bottom: 2px solid #e2e8f0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         .header-main { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
-        .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 800; font-size: 1.4rem; color: var(--primary); }
         
-        nav { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; max-width: 1200px; margin: 0 auto; scrollbar-width: none; }
+        .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; }
+        .logo-icon { 
+            background: linear-gradient(135deg, var(--primary), #818cf8); 
+            color: white; width: 40px; height: 40px; border-radius: 10px; 
+            display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800;
+        }
+        .logo-text { font-weight: 800; font-size: 1.4rem; color: var(--dark); letter-spacing: -0.5px; }
+
+        .user-controls { display: flex; align-items: center; gap: 15px; background: #f1f5f9; padding: 6px 15px; border-radius: 50px; }
+        .user-name-display { font-weight: 700; font-size: 0.9rem; color: var(--primary); }
+        .logout-btn { background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 0; display: flex; align-items: center; color: var(--gray); }
+        .logout-btn:hover { color: var(--danger); }
+
+        /* Navigation */
+        nav { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; max-width: 1200px; margin: 0 auto; border-bottom: 1px solid #eee; }
         nav::-webkit-scrollbar { display: none; }
         nav a { 
-            text-decoration: none; color: var(--dark); font-weight: 600; padding: 8px 16px; 
-            border-radius: 50px; white-space: nowrap; font-size: 0.9rem; transition: 0.3s;
-            background: #f8fafc; border: 1px solid #e2e8f0; cursor: pointer;
+            text-decoration: none; color: #64748b; font-weight: 600; padding: 10px 18px; 
+            border-radius: 50px; white-space: nowrap; font-size: 0.95rem; transition: 0.2s;
+            background: white; border: 1px solid #e2e8f0; cursor: pointer;
         }
         nav a.active { background: var(--primary); color: white; border-color: var(--primary); }
-        nav a.expert-link.active { background: var(--secondary); border-color: var(--secondary); }
 
-        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        /* Container & Pages */
+        .container { padding: 25px 20px; max-width: 1200px; margin: 0 auto; }
         .page { display: none; }
-        .page.active { display: block; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Profile & Stats */
-        .profile-header { background: white; padding: 25px; border-radius: 24px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 20px; border-top: 6px solid var(--primary); }
-        .points-badge { font-size: 2.5rem; font-weight: 800; color: var(--primary); margin: 5px 0; }
-        .progress-container { background: #e2e8f0; height: 10px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        .progress-bar { background: var(--success); height: 100%; transition: width 0.5s; }
-
-        /* Grid & Cards */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-        .card { background: white; border-radius: 20px; padding: 20px; position: relative; box-shadow: var(--card-shadow); border: 1px solid #f1f5f9; }
-        .tag { position: absolute; top: 15px; left: 15px; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; }
+        /* Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 24px; padding: 25px; position: relative; box-shadow: var(--card-shadow); border: 1px solid rgba(0,0,0,0.02); }
+        .tag { position: absolute; top: 15px; left: 15px; padding: 4px 12px; border-radius: 50px; font-weight: 700; font-size: 0.75rem; }
         .tag-points { background: #fef3c7; color: #92400e; }
-        .tag-type { background: #e0e7ff; color: var(--primary); left: auto; right: 15px; }
+        .tag-category { background: #e0e7ff; color: var(--primary); right: 15px; left: auto; }
 
-        .btn { width: 100%; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 10px; }
+        /* Forms */
+        .form-container { background: white; padding: 30px; border-radius: 24px; max-width: 600px; margin: 0 auto; box-shadow: var(--card-shadow); }
+        label { display: block; font-weight: 700; margin: 10px 0 5px 0; font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #f1f5f9; border-radius: 12px; font-family: inherit; font-size: 1rem; box-sizing: border-box; }
+        input:focus { outline: none; border-color: var(--primary); }
+
+        .btn { width: 100%; border: none; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 1rem; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-expert { background: var(--secondary); color: white; margin-bottom: 20px; }
+
+        /* Profile Stats */
+        .profile-stat-box { background: white; padding: 30px; border-radius: 24px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 30px; }
+        .points-val { font-size: 3.5rem; font-weight: 800; color: var(--primary); line-height: 1; }
         
         #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--primary); }
-        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #f1f5f9; border-radius: 10px; margin-bottom: 12px; font-family: inherit; box-sizing: border-box; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: white; width: 100%; max-width: 450px; padding: 25px; border-radius: 24px; }
+        .modal-content { background: white; width: 100%; max-width: 450px; padding: 30px; border-radius: 24px; }
     </style>
 </head>
 <body onload="initSystem()">
 
     <section id="login-screen">
-        <div style="background: white; padding: 30px; border-radius: 24px; text-align: center; width: 350px;">
-            <span style="font-size: 3rem;">👑</span>
-            <h2>המאסטרים של טוביהו</h2>
-            <input type="text" id="userName" placeholder="השם שלך">
-            <button class="btn btn-primary" onclick="handleLogin()">כניסה למערכת</button>
+        <div style="background: white; padding: 40px; border-radius: 30px; text-align: center; width: 100%; max-width: 400px;">
+            <div class="logo-icon" style="margin: 0 auto 20px; width: 60px; height: 60px; font-size: 30px;">M</div>
+            <h1 style="margin: 0 0 10px;">ברוכים הבאים</h1>
+            <p style="color: #64748b; margin-bottom: 30px;">המאסטרים של טוביהו</p>
+            <input type="text" id="loginUserName" placeholder="הכנס שם מלא">
+            <button class="btn btn-primary" onclick="handleLogin()">התחל מעורבות</button>
         </div>
     </section>
 
     <div id="app" style="display:none">
         <header>
             <div class="header-main">
-                <div class="logo" onclick="showPage('dashboard')">👑 המאסטרים</div>
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <span id="top-points" style="font-weight:800; color:var(--primary)">💎 0</span>
-                    <button onclick="logout()" style="border:none; background:none; cursor:pointer; font-size:1.2rem">🚪</button>
+                <div class="logo" onclick="showPage('dashboard')">
+                    <div class="logo-icon">M</div>
+                    <span class="logo-text">המאסטרים של טוביהו</span>
+                </div>
+                <div class="user-controls">
+                    <span class="user-name-display" id="user-display-name">שם משתמש</span>
+                    <button class="logout-btn" onclick="logout()" title="יציאה">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    </button>
                 </div>
             </div>
         </header>
         
         <nav>
             <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">לוח בקשות 🤝</a>
-            <a onclick="showPage('experts')" id="nav-experts" class="expert-link">נבחרת המומחים 🎓</a>
+            <a onclick="showPage('experts')" id="nav-experts">נבחרת המומחים 🎓</a>
             <a onclick="showPage('profile')" id="nav-profile">הפרופיל שלי 👤</a>
-            <a onclick="showPage('new')" id="nav-new">פרסום חדש +</a>
+            <a onclick="showPage('new-request')" id="nav-new-request">בקשה חדשה +</a>
             <a onclick="showPage('admin')" id="nav-admin" style="color:var(--danger)">ניהול 🛠️</a>
         </nav>
 
@@ -92,90 +117,129 @@
             </div>
 
             <div id="page-experts" class="page">
+                <button class="btn btn-expert" onclick="showPage('new-expert')">✨ הצטרפות לנבחרת המומחים</button>
                 <div class="grid" id="expert-grid"></div>
             </div>
 
             <div id="page-profile" class="page">
-                <div class="profile-header">
-                    <h2 id="prof-display-name">שם משתמש</h2>
-                    <div class="points-badge" id="prof-points">0</div>
-                    <p>נקודות מעורבות שצברת</p>
-                    <div class="progress-container"><div id="prof-bar" class="progress-bar"></div></div>
-                    <b id="rank-name">מאסטר מתלמד</b>
+                <div class="profile-stat-box">
+                    <div id="prof-name" style="font-weight: 800; font-size: 1.5rem; margin-bottom: 5px;"></div>
+                    <div class="points-val" id="prof-points">0</div>
+                    <p style="font-weight: 700; color: #64748b;">נקודות שצברת</p>
                 </div>
                 <h3>הפעילות שלי</h3>
                 <div id="my-activity" class="grid"></div>
             </div>
 
-            <div id="page-new" class="page">
-                <div style="background:white; padding:25px; border-radius:20px; max-width:500px; margin:0 auto;">
-                    <h3>מה ברצונך לפרסם?</h3>
-                    <select id="post-type-select" onchange="togglePostForm()">
-                        <option value="request">בקשת עזרה (צריך עזרה)</option>
-                        <option value="expert">כרטיס מומחה (יכול לעזור)</option>
+            <div id="page-new-request" class="page">
+                <div class="form-container">
+                    <h2>פרסום בקשת עזרה</h2>
+                    <label>שם מלא</label>
+                    <input type="text" id="req-full-name">
+                    
+                    <label>תפקיד</label>
+                    <select id="req-role" onchange="toggleSchoolClass('req')">
+                        <option value="תלמיד">תלמיד/ה</option>
+                        <option value="מורה">מורה</option>
+                        <option value="איש מנהלה">איש מנהלה</option>
                     </select>
-                    <hr>
-                    <div id="post-form">
-                        <label id="title-label">כותרת</label>
-                        <input type="text" id="post-title">
-                        <label>תיאור</label>
-                        <textarea id="post-desc" rows="3"></textarea>
-                        <div id="points-input-area">
-                            <label>ניקוד למתנדב (10-50)</label>
-                            <input type="number" id="post-points" value="20">
-                        </div>
-                        <button class="btn btn-primary" onclick="savePost()">פרסם עכשיו</button>
+
+                    <div id="req-class-div">
+                        <label>כיתה</label>
+                        <input type="text" id="req-class" placeholder="למשל: י' 2">
                     </div>
+
+                    <label>קטגוריה</label>
+                    <select id="req-cat">
+                        <option>עזרה לימודית</option>
+                        <option>עזרה חברתית</option>
+                        <option>עזרה טכנית-לוגיסטית</option>
+                    </select>
+
+                    <label>מה הצורך? (כותרת)</label>
+                    <input type="text" id="req-title" placeholder="למשל: עזרה בסידור מצגת">
+                    
+                    <label>תיאור מפורט</label>
+                    <textarea id="req-desc" rows="3" placeholder="הסבר קצר על הבקשה..."></textarea>
+                    
+                    <div style="margin: 15px 0; color: var(--primary); font-weight: bold;">💎 ניקוד למתנדב: 20 נקודות</div>
+                    
+                    <button class="btn btn-primary" onclick="submitNewRequest()">פרסם בקשה</button>
+                </div>
+            </div>
+
+            <div id="page-new-expert" class="page">
+                <div class="form-container">
+                    <h2 style="color: var(--secondary);">הצטרפות כמאסטר (מומחה)</h2>
+                    <label>שם מלא</label>
+                    <input type="text" id="exp-full-name">
+                    
+                    <label>תפקיד</label>
+                    <select id="exp-role" onchange="toggleSchoolClass('exp')">
+                        <option value="תלמיד">תלמיד/ה</option>
+                        <option value="מורה">מורה</option>
+                    </select>
+
+                    <div id="exp-class-div">
+                        <label>כיתה</label>
+                        <input type="text" id="exp-class">
+                    </div>
+
+                    <label>תחום המומחיות שלך</label>
+                    <input type="text" id="exp-skill" placeholder="למשל: תכנות, נגינה בגיטרה, מתמטיקה">
+                    
+                    <label>איך אוכל לעזור לאחרים?</label>
+                    <textarea id="exp-desc" rows="3" placeholder="ספר קצת על הניסיון שלך..."></textarea>
+                    
+                    <button class="btn btn-expert" style="margin-top:15px" onclick="submitNewExpert()">פרסם את המומחיות שלי</button>
                 </div>
             </div>
 
             <div id="page-admin" class="page">
-                <h2>בקשות הממתיונות לאישור</h2>
+                <h2>אישור חיבורים ותגמולים</h2>
                 <div id="admin-list" class="grid"></div>
             </div>
         </div>
     </div>
 
-    <div id="action-modal" class="modal">
+    <div id="match-modal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title">כותרת</h3>
+            <h3 id="modal-title-text">אני רוצה לעזור</h3>
             <label>השם שלך</label>
-            <input type="text" id="action-name">
+            <input type="text" id="match-user-name">
             <label>הודעה/זמינות</label>
-            <textarea id="action-info" rows="2"></textarea>
-            <button class="btn btn-primary" id="modal-btn" onclick="processAction()">שלח</button>
-            <button class="btn" onclick="closeModal()">ביטול</button>
+            <textarea id="match-info" rows="2"></textarea>
+            <button class="btn btn-primary" onclick="confirmMatchRequest()">שלח בקשה</button>
+            <button class="btn" style="background:none" onclick="closeModal()">ביטול</button>
         </div>
     </div>
 
     <script>
-        // Database Initialization
         let db = {
-            user: { name: "", points: 0 },
+            currentUser: { name: "", points: 0 },
             requests: [],
             experts: [],
             matches: []
         };
 
         function initSystem() {
-            const saved = localStorage.getItem('toviyahu_db');
-            if (saved) {
-                db = JSON.parse(saved);
-                if (db.user.name) {
-                    loginSuccess();
-                }
+            const data = localStorage.getItem('master_toviyahu_v3');
+            if(data) {
+                db = JSON.parse(data);
+                if(db.currentUser.name) loginSuccess();
             }
         }
 
-        function saveDB() {
-            localStorage.setItem('toviyahu_db', JSON.stringify(db));
+        function sync() {
+            localStorage.setItem('master_toviyahu_v3', JSON.stringify(db));
+            renderUI();
         }
 
         function handleLogin() {
-            const name = document.getElementById('userName').value;
-            if (name) {
-                db.user.name = name;
-                saveDB();
+            const name = document.getElementById('loginUserName').value;
+            if(name) {
+                db.currentUser.name = name;
+                sync();
                 loginSuccess();
             }
         }
@@ -183,13 +247,14 @@
         function loginSuccess() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'block';
-            renderAll();
+            document.getElementById('user-display-name').innerText = db.currentUser.name;
+            renderUI();
         }
 
         function logout() {
-            if(confirm("לצאת מהמערכת? הנתונים יישמרו.")) {
-                db.user.name = "";
-                saveDB();
+            if(confirm("האם ברצונך לצאת? הנתונים יישמרו.")) {
+                db.currentUser.name = "";
+                sync();
                 location.reload();
             }
         }
@@ -198,132 +263,130 @@
             document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
             document.getElementById('page-'+p).classList.add('active');
-            document.getElementById('nav-'+p).classList.add('active');
-            renderAll();
+            const nav = document.getElementById('nav-'+p);
+            if(nav) nav.classList.add('active');
+            window.scrollTo(0,0);
         }
 
-        function togglePostForm() {
-            const type = document.getElementById('post-type-select').value;
-            document.getElementById('points-input-area').style.display = (type === 'request') ? 'block' : 'none';
-            document.getElementById('title-label').innerText = (type === 'request') ? 'מה הבקשה?' : 'במה את/ה מומחה?';
+        function toggleSchoolClass(prefix) {
+            const role = document.getElementById(prefix+'-role').value;
+            document.getElementById(prefix+'-class-div').style.display = (role === 'תלמיד') ? 'block' : 'none';
         }
 
-        function savePost() {
-            const type = document.getElementById('post-type-select').value;
-            const title = document.getElementById('post-title').value;
-            const desc = document.getElementById('post-desc').value;
-            const points = parseInt(document.getElementById('post-points').value) || 0;
-
-            if(!title) return alert("מלא כותרת");
-
-            const item = { id: Date.now(), title, desc, points, creator: db.user.name, status: 'open' };
-            
-            if(type === 'request') db.requests.unshift(item);
-            else db.experts.unshift(item);
-
-            saveDB();
-            alert("פורסם בהצלחה!");
-            showPage(type === 'request' ? 'dashboard' : 'experts');
+        // --- פונקציות פרסום ---
+        function submitNewRequest() {
+            const req = {
+                id: Date.now(),
+                creator: document.getElementById('req-full-name').value,
+                role: document.getElementById('req-role').value,
+                class: document.getElementById('req-class').value,
+                category: document.getElementById('req-cat').value,
+                title: document.getElementById('req-title').value,
+                desc: document.getElementById('req-desc').value,
+                points: 20,
+                status: 'open'
+            };
+            if(!req.title || !req.creator) return alert("מלא שם וכותרת");
+            db.requests.unshift(req);
+            sync();
+            showPage('dashboard');
         }
 
-        function renderAll() {
-            document.getElementById('top-points').innerText = '💎 ' + db.user.points;
-            renderRequests();
-            renderExperts();
-            renderProfile();
-            renderAdmin();
+        function submitNewExpert() {
+            const exp = {
+                id: Date.now(),
+                name: document.getElementById('exp-full-name').value,
+                role: document.getElementById('exp-role').value,
+                class: document.getElementById('exp-class').value,
+                skill: document.getElementById('exp-skill').value,
+                desc: document.getElementById('exp-desc').value
+            };
+            if(!exp.name || !exp.skill) return alert("מלא שם ותחום מומחיות");
+            db.experts.unshift(exp);
+            sync();
+            showPage('experts');
         }
 
-        function renderRequests() {
-            const grid = document.getElementById('request-grid');
-            grid.innerHTML = db.requests.filter(r => r.status === 'open').map(r => `
+        // --- רינדור ---
+        function renderUI() {
+            // Dashboard
+            const reqGrid = document.getElementById('request-grid');
+            reqGrid.innerHTML = db.requests.filter(r => r.status === 'open').map(r => `
                 <div class="card">
-                    <div class="tag tag-points">💎 ${r.points}</div>
-                    <h3 style="margin-top:20px">${r.title}</h3>
+                    <div class="tag tag-points">💎 20 נק'</div>
+                    <div class="tag tag-category">${r.category}</div>
+                    <h3 style="margin-top:30px">${r.title}</h3>
                     <p>${r.desc}</p>
-                    <small>מאת: ${r.creator}</small>
-                    <button class="btn btn-primary" onclick="openModal(${r.id}, 'request')">אני רוצה לעזור</button>
+                    <div style="font-size:0.85rem; font-weight:700">מאת: ${r.creator} (${r.role})</div>
+                    <button class="btn btn-primary" onclick="openMatchModal(${r.id}, 'req', '${r.title}')">אני רוצה לעזור</button>
                 </div>
-            `).join('') || '<p>אין בקשות כרגע</p>';
-        }
+            `).join('') || '<p>אין בקשות כרגע. תהיו הראשונים לפרסם!</p>';
 
-        function renderExperts() {
-            const grid = document.getElementById('expert-grid');
-            grid.innerHTML = db.experts.map(e => `
+            // Experts
+            const expGrid = document.getElementById('expert-grid');
+            expGrid.innerHTML = db.experts.map(e => `
                 <div class="card" style="border-top: 5px solid var(--secondary)">
-                    <h3>${e.title}</h3>
+                    <div class="tag" style="background:#fdf2f8; color:var(--secondary)">מומחה</div>
+                    <h3 style="margin-top:20px">${e.skill}</h3>
                     <p>${e.desc}</p>
-                    <small>המומחה: ${e.creator}</small>
-                    <button class="btn btn-secondary" onclick="openModal(${e.id}, 'expert')">בקש עזרה</button>
+                    <div style="font-weight:700">שם: ${e.name}</div>
+                    <button class="btn btn-expert" onclick="openMatchModal(${e.id}, 'exp', '${e.name}')">בקש עזרה</button>
                 </div>
-            `).join('') || '<p>אין מומחים כרגע</p>';
-        }
+            `).join('') || '<p>עוד אין מומחים בנבחרת.</p>';
 
-        function renderProfile() {
-            document.getElementById('prof-display-name').innerText = db.user.name;
-            document.getElementById('prof-points').innerText = db.user.points;
-            const prog = Math.min((db.user.points / 300) * 100, 100);
-            document.getElementById('prof-bar').style.width = prog + '%';
+            // Profile
+            document.getElementById('prof-name').innerText = db.currentUser.name;
+            document.getElementById('prof-points').innerText = db.currentUser.points;
             
-            const activity = [...db.requests.filter(r => r.creator === db.user.name), 
-                             ...db.matches.filter(m => m.volName === db.user.name)];
-            
-            document.getElementById('my-activity').innerHTML = activity.map(a => `
-                <div class="card"><h4>${a.title || 'התנדבות'}</h4><small>${a.status}</small></div>
-            `).join('');
-        }
-
-        function renderAdmin() {
-            const list = document.getElementById('admin-list');
+            // Admin
+            const adminList = document.getElementById('admin-list');
             const pending = db.matches.filter(m => m.status === 'pending');
-            list.innerHTML = pending.map(m => `
+            adminList.innerHTML = pending.map(m => `
                 <div class="card">
-                    <h4>בקשת מאץ'</h4>
-                    <p>${m.volName} ↔️ ${m.targetCreator}</p>
-                    <button class="btn btn-primary" onclick="approveMatch(${m.id})">אשר ותגמל</button>
+                    <h4>בקשת חיבור</h4>
+                    <p><strong>${m.fromUser}</strong> רוצה לעזור ל-<strong>${m.targetName}</strong></p>
+                    <button class="btn btn-primary" onclick="approveMatch(${m.id})">אשר ותגמל (20 נק')</button>
                 </div>
-            `).join('') || '<p>אין בקשות לאישור</p>';
+            `).join('') || '<p>אין בקשות לאישור.</p>';
         }
 
-        let curTarget = null;
-        function openModal(id, type) {
-            curTarget = {id, type};
-            document.getElementById('action-modal').style.display = 'flex';
+        // --- Modal & Logic ---
+        let activeMatch = null;
+        function openMatchModal(id, type, targetName) {
+            activeMatch = { id, type, targetName };
+            document.getElementById('modal-title-text').innerText = type === 'req' ? 'התנדבות לבקשה' : 'פנייה למומחה';
+            document.getElementById('match-modal').style.display = 'flex';
         }
-        function closeModal() { document.getElementById('action-modal').style.display = 'none'; }
+        function closeModal() { document.getElementById('match-modal').style.display = 'none'; }
 
-        function processAction() {
-            const name = document.getElementById('action-name').value;
-            const info = document.getElementById('action-info').value;
+        function confirmMatchRequest() {
+            const name = document.getElementById('match-user-name').value;
             if(!name) return;
-
-            const source = curTarget.type === 'request' ? db.requests : db.experts;
-            const item = source.find(i => i.id === curTarget.id);
-
             db.matches.push({
                 id: Date.now(),
-                volName: name,
-                volInfo: info,
-                targetId: item.id,
-                targetCreator: item.creator,
-                points: item.points || 0,
+                fromUser: name,
+                targetId: activeMatch.id,
+                targetName: activeMatch.targetName,
                 status: 'pending'
             });
-
-            if(curTarget.type === 'request') item.status = 'matching';
-            saveDB();
-            alert("נשלח לאישור מנהלת");
+            if(activeMatch.type === 'req') {
+                db.requests.find(r => r.id === activeMatch.id).status = 'pending_match';
+            }
+            sync();
             closeModal();
-            renderAll();
+            alert("הבקשה עברה לאישור המנהלת!");
         }
 
         function approveMatch(mid) {
-            const match = db.matches.find(m => m.id === mid);
-            match.status = 'approved';
-            if(match.volName === db.user.name) db.user.points += match.points;
-            saveDB();
-            renderAll();
+            const m = db.matches.find(match => match.id === mid);
+            m.status = 'approved';
+            if(m.fromUser === db.currentUser.name) {
+                db.currentUser.points += 20;
+            }
+            sync();
+            alert("המאץ' אושר!");
         }
+
     </script>
 </body>
 </html>
