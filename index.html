@@ -41,6 +41,8 @@
             box-shadow: 0 20px 25px rgba(0,0,0,0.1);
         }
 
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; box-sizing: border-box; }
+
         /* --- Main App Container --- */
         #app {
             display: none;
@@ -75,7 +77,6 @@
         .page { display: none; }
         .page.active { display: block; }
 
-        /* --- Dashboard UI --- */
         .hero {
             background: linear-gradient(rgba(79, 70, 229, 0.9), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1000');
             background-size: cover; background-position: center;
@@ -83,31 +84,30 @@
         }
 
         .request-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; }
-        .points-badge { position: absolute; top: 20px; left: 20px; color: var(--success); font-weight: bold; }
-        .category-tag { background: #e0e7ff; color: var(--primary); padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; float: right; }
-
-        /* --- Admin UI - Code Exporter --- */
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; margin-bottom: 20px; }
+        
+        /* --- Code Exporter Style --- */
         #code-exporter {
             width: 100%;
-            height: 200px;
+            height: 250px;
             font-family: monospace;
             padding: 10px;
             margin-top: 15px;
             border-radius: 10px;
             border: 1px solid #ddd;
-            background: #f1f5f9;
+            background: #272822;
+            color: white;
             direction: ltr;
+            white-space: pre;
         }
 
-        /* --- Buttons --- */
         .btn { 
             padding: 12px 25px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; 
             transition: 0.2s; font-family: inherit;
         }
         .btn-dark { background: var(--dark); color: white; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-copy { background: #10b981; color: white; margin-top: 10px; }
+        .btn-copy { background: #10b981; color: white; margin-top: 10px; width: 100%; }
 
     </style>
 </head>
@@ -118,3 +118,108 @@
             <div style="font-size: 50px; margin-bottom: 10px;">👑</div>
             <h1>המאסטרים של טוביהו</h1>
             <p style="color: var(--gray)">פלטפורמת המעורבות של בית הספר.</p>
+            
+            <div style="margin: 30px 0; text-align: right;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">אימייל להתחברות</label>
+                <input type="email" id="userEmail" placeholder="name@school.edu.il" style="text-align: center;">
+            </div>
+            
+            <button class="btn btn-dark" style="width: 100%;" onclick="initApp()">כניסה למערכת</button>
+        </div>
+    </section>
+
+    <div id="app">
+        <header>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 24px;">👑</span>
+                <h2 style="margin: 0;">המאסטרים של טוביהו</h2>
+            </div>
+            <nav>
+                <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">לוח בקשות</a>
+                <a onclick="showPage('new-request')" id="nav-new-request">בקשה חדשה</a>
+                <a onclick="showPage('profile')" id="nav-profile">פרופיל אישי</a>
+                <a onclick="showPage('admin')" id="nav-admin" class="admin-link">פאנל ניהול</a>
+            </nav>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="text-align: left;">
+                    <div id="display-name" style="font-weight: bold;">Netbok10</div>
+                    <div style="color: var(--success); font-size: 0.8rem;">● 0 נקודות</div>
+                </div>
+                <button onclick="location.reload()" class="btn" style="background: #eee;">יציאה</button>
+            </div>
+        </header>
+
+        <div class="content-area">
+            
+            <div id="page-dashboard" class="page active">
+                <div class="hero">
+                    <div style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; width: fit-content; margin-bottom: 15px;">קהילת המאסטרים</div>
+                    <h2 style="font-size: 3rem; margin: 0;">מעורבות שיוצרת שינוי</h2>
+                    <p>ברוכים הבאים לפורטל המעורבות של "המאסטרים של טוביהו".</p>
+                </div>
+                <h3>בקשות אחרונות בלוח</h3>
+                <div class="request-grid">
+                    <div class="card">
+                        <h4 style="margin: 0;">עזרה במתמטיקה</h4>
+                        <p style="color: var(--gray);">צריך עזרה עם פונקציות...</p>
+                        <button class="btn btn-dark" style="width: 100%;">אני רוצה לעזור</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-admin" class="page">
+                <h1>פאנל ניהול - המאסטרים</h1>
+                <div class="card">
+                    <h3>🛠️ ייצוא קוד מקור (לעדכון ה-GitHub)</h3>
+                    <p>לחץ על הכפתור כדי להפיק את הקוד המעודכן של האתר שלך:</p>
+                    <button class="btn btn-primary" onclick="generateSourceCode()">צור קוד מעודכן</button>
+                    <textarea id="code-exporter" readonly placeholder="הקוד יופיע כאן..."></textarea>
+                    <button id="copy-btn" class="btn btn-copy" style="display:none;" onclick="copyCode()">העתק הכל והדבק ב-GitHub</button>
+                </div>
+            </div>
+
+            <div id="page-new-request" class="page"><h1>בקשה חדשה</h1><p>בקרוב...</p></div>
+            <div id="page-profile" class="page"><h1>פרופיל אישי</h1><p>בקרוב...</p></div>
+
+        </div>
+    </div>
+
+    <script>
+        function initApp() {
+            const email = document.getElementById('userEmail').value;
+            if(email.includes('@')) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                document.body.style.backgroundColor = 'var(--bg)';
+                // עדכון שם המשתמש לפי המייל (לפני ה-@)
+                const name = email.split('@')[0];
+                document.getElementById('display-name').innerText = name;
+            } else {
+                alert('אנא הזן כתובת אימייל תקינה (חייב לכלול @)');
+            }
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.getElementById('nav-' + pageId).classList.add('active');
+        }
+
+        function generateSourceCode() {
+            // שואב את כל ה-HTML הנוכחי
+            const fullCode = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            const area = document.getElementById('code-exporter');
+            area.value = fullCode;
+            document.getElementById('copy-btn').style.display = 'block';
+        }
+
+        function copyCode() {
+            const area = document.getElementById('code-exporter');
+            area.select();
+            document.execCommand('copy');
+            alert('הקוד הועתק! עכשיו לך ל-GitHub, הדבק אותו במקום הקוד הישן ולחץ על Commit.');
+        }
+    </script>
+</body>
+</html>
