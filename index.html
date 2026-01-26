@@ -1,25 +1,34 @@
 <html dir="rtl" lang="he">
 <head>
-    <meta charset="UTF-8">
-    <script class="injected-ffc2e83d85">
-        // ... (כאן נמצא כל הקוד הארוך ששלחת לי ב-head, אני משאיר אותו בדיוק כפי שהוא)
-    </script>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <style>
-        .page-section { display: none; }
-        .page-section.active { display: block; }
-    </style>
+<meta charset="UTF-8">
+
+<script class="injected-ffc2e83d85">
+(function(){'use strict';function l(a){var c=0;return function(){return c<a.length?{done:!1,value:a[c++]}:{done:!0}}} /* ... שאר הקוד המקורי שלך ... */ }).call(this);
+</script>
+
+<script class="injected-ffc2e83d85">
+const IMG_SEARCH_REPLACE_MAP = {};
+const IMG_SEARCH_ATTRIBUTION_MAP = {};
+const IMG_GEN_REPLACE_MAP = {"modern school students collaboration hero banner&aspect=16:9&reimagine=1": "https://lh3.googleusercontent.com/gg-dl/AOI_d_-cRrCPfVYQzHjA5JIEitbqqf2Il1dUFJPXazomrQ8CNHFRpXGw--oApMk_ncFLSehwc7hBBhLbHYcrX8Ct0TS-_lQG2968aFcDWNozUzaU3srjIrRKE28dMqLuTlVDcXPPvw4F941Is4O-dGnQzXuHg0YhhaPr6tfmofBsQUmTH5Ok", "abstract creative learning background pattern&aspect=16:9&reimagine=1": "https://lh3.googleusercontent.com/gg-dl/AOI_d_-L9dhL72wtJ4NMofQhVTzFsNisj9v2a4xnEQL8Rfq9po-0QWAIuzno-4uQceC9j30ezuYT21iob4ZgbwDHJobvHLltgVdIuAweC3vKpllczu42cbQkJX6Htm_DfBcHSrnATvXHAfV8CO1DeAQDRRHbkiCoMwb30EffDKMtejYasXuUjQ"};
+const MAY_HAVE_BACKGROUND_IMAGE = false;
+const IMG_SEARCH_REIMAGINE_PARAM = "1";
+</script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+</style>
 </head>
 
 <body class="bg-gray-50 font-sans">
 
     <div id="welcome-page" class="page-section active min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white">
-        <h1 class="text-5xl font-extrabold text-blue-700 mb-4 italic">ברוכים הבאים</h1>
-        <p class="text-xl text-gray-600 mb-10">לוח הבקשות השיתופי שלך</p>
+        <h1 class="text-5xl font-extrabold text-blue-700 mb-4 italic text-center">ברוכים הבאים</h1>
+        <p class="text-xl text-gray-600 mb-10 text-center">לוח הבקשות השיתופי שלך</p>
         
-        <div class="flex gap-6">
+        <div class="flex flex-col sm:flex-row gap-6">
             <button onclick="showPage('publish-page')" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full shadow-lg transition-all transform hover:scale-105 font-bold">
                 פרסום בקשה
             </button>
@@ -35,12 +44,12 @@
             
             <form id="request-form" class="space-y-5">
                 <div>
-                    <label class="block text-gray-700 font-semibold mb-2">נושא הבקשה</label>
-                    <input type="text" id="title" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                    <label class="block text-gray-700 font-semibold mb-2 text-right">נושא הבקשה</label>
+                    <input type="text" id="title" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-right">
                 </div>
                 <div>
-                    <label class="block text-gray-700 font-semibold mb-2">פירוט הבקשה</label>
-                    <textarea id="content" required rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"></textarea>
+                    <label class="block text-gray-700 font-semibold mb-2 text-right">פירוט הבקשה</label>
+                    <textarea id="content" required rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-right"></textarea>
                 </div>
                 
                 <div class="flex gap-4 pt-4">
@@ -60,7 +69,7 @@
             <h2 class="text-4xl font-black text-blue-800 mb-8">לוח בקשות ציבורי</h2>
             
             <div id="requests-container" class="grid gap-6 text-right">
-                <p class="text-gray-500">מתחבר למסד הנתונים...</p>
+                <p class="text-gray-500">טוען נתונים מהענן...</p>
             </div>
 
             <button onclick="showPage('welcome-page')" class="mt-12 inline-block text-blue-600 font-bold hover:underline">
@@ -71,8 +80,8 @@
 
     <script>
         /**
-         * הגדרת ה-Firebase שלך
-         * החליפי את הקישור למטה בקישור שמופיע לך ב-Firebase Console
+         * כאן את מדביקה את הקישור שהעתקת מה-Firebase.
+         * וודאי שהסיומת היא requests.json
          */
         const FIREBASE_URL = "https://masterim-92c84-default-rtdb.europe-west1.firebasedatabase.app/requests.json";
 
@@ -85,7 +94,7 @@
             }
         }
 
-        // פונקציית שליחה לענן
+        // שליחה לענן (POST)
         document.getElementById('request-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = document.getElementById('submit-btn');
@@ -100,23 +109,29 @@
             submitBtn.innerText = "שולח...";
 
             try {
-                await fetch(FIREBASE_URL, {
+                const response = await fetch(FIREBASE_URL, {
                     method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                alert('הבקשה נשמרה בהצלחה בענן!');
-                document.getElementById('request-form').reset();
-                showPage('requests-page');
+
+                if (response.ok) {
+                    alert('הבקשה נשמרה בהצלחה בענן!');
+                    document.getElementById('request-form').reset();
+                    showPage('requests-page');
+                } else {
+                    throw new Error('Response not OK');
+                }
             } catch (error) {
                 console.error(error);
-                alert('שגיאה בשמירת הנתונים. וודאי שהקישור תקין.');
+                alert('שגיאה: וודאי שהקישור תקין ושהגדרת Rules ב-Firebase ל-true.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerText = "שלח בקשה לענן";
             }
         });
 
-        // פונקציית משיכה מהענן
+        // משיכה מהענן (GET)
         async function fetchRequests() {
             const container = document.getElementById('requests-container');
             
@@ -125,13 +140,12 @@
                 const data = await response.json();
                 
                 if (!data) {
-                    container.innerHTML = "<p class='text-gray-500'>אין בקשות כרגע. תהיי הראשונה לכתוב!</p>";
+                    container.innerHTML = "<p class='text-gray-500 text-center'>אין בקשות כרגע.</p>";
                     return;
                 }
 
-                // הצגת הנתונים בלוח
                 container.innerHTML = Object.values(data).reverse().map(req => `
-                    <div class="bg-white p-6 rounded-2xl shadow-md border-r-8 border-blue-600 text-right">
+                    <div class="bg-white p-6 rounded-2xl shadow-md border-r-8 border-blue-600">
                         <h3 class="text-xl font-bold text-blue-900 mb-2">${req.title}</h3>
                         <p class="text-gray-700 mb-4">${req.content}</p>
                         <div class="text-xs text-gray-400 font-mono">${req.timestamp}</div>
@@ -139,7 +153,7 @@
                 `).join('');
 
             } catch (error) {
-                container.innerHTML = "<p class='text-red-500'>שגיאה בטעינת נתונים.</p>";
+                container.innerHTML = "<p class='text-red-500 text-center'>שגיאה בטעינת הנתונים.</p>";
             }
         }
     </script>
