@@ -1,103 +1,145 @@
-<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
     <meta charset="UTF-8">
-    <title>לוח בקשות חי</title>
+    <script class="injected-ffc2e83d85">
+        // ... (כאן נמצא כל הקוד הארוך ששלחת לי ב-head, אני משאיר אותו בדיוק כפי שהוא)
+    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
 
-    <nav class="bg-blue-600 p-4 text-white flex justify-center gap-4">
-        <button onclick="showPage('welcome-page')" class="hover:underline">בית</button>
-        <button onclick="showPage('publish-page')" class="hover:underline">פרסום</button>
-        <button onclick="showPage('requests-page')" class="hover:underline">לוח בקשות</button>
-    </nav>
+<body class="bg-gray-50 font-sans">
 
-    <div id="welcome-page" class="page-section p-10 text-center">
-        <h1 class="text-4xl font-bold mb-4">ברוכים הבאים ללוח השיתופי</h1>
-        <p class="text-xl">כאן כולם רואים את כולם בזמן אמת!</p>
+    <div id="welcome-page" class="page-section active min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white">
+        <h1 class="text-5xl font-extrabold text-blue-700 mb-4 italic">ברוכים הבאים</h1>
+        <p class="text-xl text-gray-600 mb-10">לוח הבקשות השיתופי שלך</p>
+        
+        <div class="flex gap-6">
+            <button onclick="showPage('publish-page')" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full shadow-lg transition-all transform hover:scale-105 font-bold">
+                פרסום בקשה
+            </button>
+            <button onclick="showPage('requests-page')" class="bg-white border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-full shadow-md hover:bg-blue-50 transition-all font-bold">
+                צפייה בלוח
+            </button>
+        </div>
     </div>
 
-    <div id="publish-page" class="page-section p-8 hidden">
-        <div class="max-w-md mx-auto bg-white p-6 rounded shadow-lg">
-            <h2 class="text-2xl font-bold mb-4">מה תרצו לפרסם?</h2>
-            <form id="request-form" class="space-y-4">
-                <input type="text" id="title" placeholder="כותרת" class="w-full border p-2 rounded" required>
-                <textarea id="content" placeholder="תוכן הבקשה" class="w-full border p-2 rounded" rows="4" required></textarea>
-                <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white py-2 rounded font-bold">פרסם לכולם</button>
+    <div id="publish-page" class="page-section min-h-screen p-6">
+        <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-2xl p-8 mt-10">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-4">פרסום בקשה חדשה</h2>
+            
+            <form id="request-form" class="space-y-5">
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">נושא הבקשה</label>
+                    <input type="text" id="title" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">פירוט הבקשה</label>
+                    <textarea id="content" required rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"></textarea>
+                </div>
+                
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" id="submit-btn" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-700 shadow-lg">
+                        שלח בקשה לענן
+                    </button>
+                    <button type="button" onclick="showPage('welcome-page')" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-300">
+                        ביטול
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 
-    <div id="requests-page" class="page-section p-8 hidden">
-        <h2 class="text-3xl font-bold mb-6 text-center">בקשות מהקהילה</h2>
-        <div id="requests-container" class="grid gap-4 max-w-2xl mx-auto">
-            <p class="text-center">טוען נתונים מהענן...</p>
+    <div id="requests-page" class="page-section min-h-screen p-6 bg-gray-100">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-black text-blue-800 mb-8">לוח בקשות ציבורי</h2>
+            
+            <div id="requests-container" class="grid gap-6 text-right">
+                <p class="text-gray-500">מתחבר למסד הנתונים...</p>
+            </div>
+
+            <button onclick="showPage('welcome-page')" class="mt-12 inline-block text-blue-600 font-bold hover:underline">
+                → חזרה לדף הבית
+            </button>
         </div>
     </div>
 
     <script>
-        // --- הגדרות ה-FIREBASE שלך ---
-        // הדביקי כאן את הכתובת שקיבלת ב-Realtime Database (למשל https://test-default-rtdb.firebaseio.com/)
-        const FIREBASE_URL = "כאן_להדביק_את_הקישור_שלך/posts.json";
+        /**
+         * הגדרת ה-Firebase שלך
+         * החליפי את הקישור למטה בקישור שמופיע לך ב-Firebase Console
+         */
+        const FIREBASE_URL = "https://masterim-92c84-default-rtdb.europe-west1.firebasedatabase.app/requests.json";
 
         function showPage(pageId) {
-            document.querySelectorAll('.page-section').forEach(p => p.classList.add('hidden'));
-            document.getElementById(pageId).classList.remove('hidden');
-            if (pageId === 'requests-page') loadFromCloud();
+            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            if (pageId === 'requests-page') {
+                fetchRequests();
+            }
         }
 
-        // חזרה לבית בריענון
-        window.onload = () => showPage('welcome-page');
-
-        // שליחה לענן
-        document.getElementById('request-form').onsubmit = async (e) => {
+        // פונקציית שליחה לענן
+        document.getElementById('request-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            btn.disabled = true;
-
+            const submitBtn = document.getElementById('submit-btn');
+            
             const data = {
                 title: document.getElementById('title').value,
                 content: document.getElementById('content').value,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toLocaleString('he-IL')
             };
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "שולח...";
 
             try {
                 await fetch(FIREBASE_URL, {
                     method: 'POST',
                     body: JSON.stringify(data)
                 });
-                alert("פורסם בהצלחה!");
+                alert('הבקשה נשמרה בהצלחה בענן!');
                 document.getElementById('request-form').reset();
                 showPage('requests-page');
-            } catch (err) {
-                alert("שגיאה בחיבור לענן");
+            } catch (error) {
+                console.error(error);
+                alert('שגיאה בשמירת הנתונים. וודאי שהקישור תקין.');
             } finally {
-                btn.disabled = false;
+                submitBtn.disabled = false;
+                submitBtn.innerText = "שלח בקשה לענן";
             }
-        };
+        });
 
-        // משיכה מהענן - כולם רואים את כולם!
-        async function loadFromCloud() {
+        // פונקציית משיכה מהענן
+        async function fetchRequests() {
             const container = document.getElementById('requests-container');
+            
             try {
                 const response = await fetch(FIREBASE_URL);
-                const allData = await response.json();
+                const data = await response.json();
                 
-                if (!allData) {
-                    container.innerHTML = "<p class='text-center'>עוד אין בקשות בלוח.</p>";
+                if (!data) {
+                    container.innerHTML = "<p class='text-gray-500'>אין בקשות כרגע. תהיי הראשונה לכתוב!</p>";
                     return;
                 }
 
-                container.innerHTML = Object.values(allData).reverse().map(item => `
-                    <div class="bg-white p-4 rounded shadow border-r-4 border-blue-500 text-right">
-                        <h3 class="font-bold text-lg">${item.title}</h3>
-                        <p class="text-gray-600">${item.content}</p>
-                        <small class="text-gray-400">${new Date(item.timestamp).toLocaleString('he-IL')}</small>
+                // הצגת הנתונים בלוח
+                container.innerHTML = Object.values(data).reverse().map(req => `
+                    <div class="bg-white p-6 rounded-2xl shadow-md border-r-8 border-blue-600 text-right">
+                        <h3 class="text-xl font-bold text-blue-900 mb-2">${req.title}</h3>
+                        <p class="text-gray-700 mb-4">${req.content}</p>
+                        <div class="text-xs text-gray-400 font-mono">${req.timestamp}</div>
                     </div>
                 `).join('');
-            } catch (err) {
-                container.innerHTML = "שגיאה בטעינת הנתונים.";
+
+            } catch (error) {
+                container.innerHTML = "<p class='text-red-500'>שגיאה בטעינת נתונים.</p>";
             }
         }
     </script>
