@@ -180,80 +180,18 @@
                     <option value="טכני/לוגיסטי">טכני/לוגיסטי</option>
                 </select>
             </div>
-            <!-- 3 מודעות לדוגמא -->
-            <div class="bg-amber-50 border border-amber-200 rounded-3xl px-8 py-4 flex items-center gap-3 text-amber-700 font-bold text-sm">
-                <span class="material-symbols-outlined text-xl">info</span>
-                מודעות לדוגמא — כך ייראה הלוח כשמשתמשים יפרסמו בקשות
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-10">
-                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 opacity-55 flex flex-col justify-between gap-5 pointer-events-none select-none">
-                    <div><div class="flex justify-between mb-4"><span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">לימודי</span><span class="text-[10px] text-slate-300 font-black italic">דוגמא</span></div>
-                    <h3 class="text-xl font-black text-slate-900 mb-2">עזרה בהכנה לבגרות פיזיקה</h3>
-                    <p class="text-slate-500 text-sm leading-relaxed mb-5">מתקשה בנושא חשמל ומגנטיות. מחפש מישהו שיעבור איתי על הנוסחאות לפני הבגרות.</p>
-                    <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl"><div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-black">ד</div><div><p class="font-black text-slate-800 text-sm">דנה מזרחי</p><p class="text-[10px] text-slate-400 font-bold">תלמיד • יא' 4</p></div></div></div>
-                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm">רוצה לעזור</div>
-                </div>
-                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 opacity-55 flex flex-col justify-between gap-5 pointer-events-none select-none">
-                    <div><div class="flex justify-between mb-4"><span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">טכני/לוגיסטי</span><span class="text-[10px] text-slate-300 font-black italic">דוגמא</span></div>
-                    <h3 class="text-xl font-black text-slate-900 mb-2">עזרה בהקמת אתר לפרויקט גמר</h3>
-                    <p class="text-slate-500 text-sm leading-relaxed mb-5">צריך עזרה בבניית דף נחיתה פשוט לפרויקט הגמר שלי. לא מכיר HTML בכלל.</p>
-                    <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl"><div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-black">י</div><div><p class="font-black text-slate-800 text-sm">יובל אברהם</p><p class="text-[10px] text-slate-400 font-bold">תלמיד • יב' 2</p></div></div></div>
-                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm">רוצה לעזור</div>
-                </div>
-                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 opacity-55 flex flex-col justify-between gap-5 pointer-events-none select-none">
-                    <div><div class="flex justify-between mb-4"><span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">חברתי</span><span class="text-[10px] text-slate-300 font-black italic">דוגמא</span></div>
-                    <h3 class="text-xl font-black text-slate-900 mb-2">חיפוש חברותא ללימוד משותף</h3>
-                    <p class="text-slate-500 text-sm leading-relaxed mb-5">מחפשת מישהי לקבוצת לימוד אחה"צ. יש לי מקום שקט בבית עם כל ספרי הלימוד.</p>
-                    <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl"><div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-black">מ</div><div><p class="font-black text-slate-800 text-sm">מיכל גולן</p><p class="text-[10px] text-slate-400 font-bold">תלמיד • י' 1</p></div></div></div>
-                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm">רוצה לעזור</div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-10" id="board-grid">
+            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-10" id="board-grid">
                 <div class="col-span-full py-24 text-center opacity-30 font-black text-2xl">טוען...</div>
             </div>
         </div>
 
         <!-- EXPERTS -->
         <div class="view-content space-y-10 animate-pop hidden" id="view-experts">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-                <div class="text-right">
-                    <h2 class="text-3xl md:text-5xl font-black text-slate-900 leading-none">נבחרת המומחים</h2>
-                    <p class="text-slate-500 text-base md:text-xl italic mt-3 font-medium">חברים המציעים את הידע שלהם — לחץ על מודעה לבקשת עזרה</p>
-                </div>
-                <button onclick="openAddExpertModal()" class="shrink-0 bg-emerald-600 text-white font-black px-8 py-5 rounded-3xl shadow-xl hover:bg-emerald-700 active:scale-95 transition flex items-center gap-3 text-lg">
-                    <span class="material-symbols-outlined text-2xl">add_circle</span>
-                    הוסף את המומחיות שלך
-                </button>
+            <div class="text-right">
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900 leading-none">נבחרת המומחים</h2>
+                <p class="text-slate-500 text-base md:text-xl italic mt-3 font-medium">חברים המציעים את הידע שלהם</p>
             </div>
-            <!-- 3 מודעות לדוגמא (לא לחיצות) -->
-            <div class="bg-amber-50 border border-amber-200 rounded-3xl px-8 py-4 flex items-center gap-3 text-amber-700 font-bold text-sm">
-                <span class="material-symbols-outlined text-xl">info</span>
-                מודעות לדוגמא — כך ייראה הלוח כשמשתמשים יפרסמו מומחיות אמיתית
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-10">
-                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 border-t-8 border-t-emerald-400 opacity-60 flex flex-col gap-4 pointer-events-none select-none">
-                    <div class="flex justify-between items-center"><span class="bg-emerald-50 text-emerald-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">טכני/לוגיסטי</span><span class="text-[10px] font-black text-slate-300 italic">דוגמא</span></div>
-                    <h3 class="text-xl font-black text-slate-900">מצגות קנבה ועיצוב גרפי</h3>
-                    <p class="text-slate-500 text-sm leading-relaxed">יכול לעזור בבניית מצגות מרשימות בקנבה, עיצוב לוגואים, פוסטים לרשת וכל דבר ויזואלי.</p>
-                    <div class="flex items-center gap-3 mt-2"><div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black text-lg">נ</div><div><p class="font-black text-slate-800 text-sm">נועם כהן</p><p class="text-[10px] text-slate-400 font-bold">יא' 2</p></div></div>
-                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm mt-2">בקש עזרה מהמומחה</div>
-                </div>
-                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 border-t-8 border-t-emerald-400 opacity-60 flex flex-col gap-4 pointer-events-none select-none">
-                    <div class="flex justify-between items-center"><span class="bg-emerald-50 text-emerald-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">לימודי</span><span class="text-[10px] font-black text-slate-300 italic">דוגמא</span></div>
-                    <h3 class="text-xl font-black text-slate-900">מתמטיקה — אינטגרלים וגבולות</h3>
-                    <p class="text-slate-500 text-sm leading-relaxed">מסביר בסבלנות חשבון אינפיניטסימלי ברמת יב', כולל הכנה לבגרות 5 יחידות.</p>
-                    <div class="flex items-center gap-3 mt-2"><div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black text-lg">ש</div><div><p class="font-black text-slate-800 text-sm">שירה לוי</p><p class="text-[10px] text-slate-400 font-bold">יב' 1</p></div></div>
-                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm mt-2">בקש עזרה מהמומחה</div>
-                </div>
-                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 border-t-8 border-t-emerald-400 opacity-60 flex flex-col gap-4 pointer-events-none select-none">
-                    <div class="flex justify-between items-center"><span class="bg-emerald-50 text-emerald-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">טכני/לוגיסטי</span><span class="text-[10px] font-black text-slate-300 italic">דוגמא</span></div>
-                    <h3 class="text-xl font-black text-slate-900">Excel ו־Google Sheets מתקדם</h3>
-                    <p class="text-slate-500 text-sm leading-relaxed">נוסחאות, טבלאות ציר, גרפים ואוטומציה בגיליונות אלקטרוניים — לתלמידים ולמורים.</p>
-                    <div class="flex items-center gap-3 mt-2"><div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black text-lg">א</div><div><p class="font-black text-slate-800 text-sm">אורי ברק</p><p class="text-[10px] text-slate-400 font-bold">יב' 3</p></div></div>
-                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm mt-2">בקש עזרה מהמומחה</div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-10" id="experts-grid">
+            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-10" id="experts-grid">
                 <div class="col-span-full py-24 text-center opacity-30 font-black text-2xl">טוען...</div>
             </div>
         </div>
@@ -312,56 +250,115 @@
         </div>
 
         <!-- PROFILE -->
-        <div class="view-content space-y-12 animate-pop hidden" id="view-profile">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
-                <div class="lg:col-span-1 space-y-10">
-                    <div class="bg-white rounded-[3.5rem] p-12 border border-slate-100 shadow-sm text-center relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-32 bg-indigo-50"></div>
-                        <div class="relative pt-4 flex flex-col items-center">
-                            <div class="w-32 h-32 rounded-full bg-indigo-600 text-white border-4 border-white shadow-2xl flex items-center justify-center text-5xl font-black mb-6" id="prof-initials">?</div>
-                            <h2 class="text-3xl font-black text-slate-900 mb-2" id="prof-name">משתמש</h2>
-                            <p class="text-sm text-slate-400 font-bold italic mb-10" id="prof-email">-</p>
-                            <div class="grid grid-cols-2 gap-4 w-full text-right">
-                                <div class="bg-indigo-50 p-6 rounded-[2.5rem] border border-indigo-100">
-                                    <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">נקודות</p>
-                                    <p class="text-4xl font-black text-indigo-700 leading-none" id="prof-points">0</p>
+        <div class="view-content space-y-8 animate-pop hidden" id="view-profile">
+
+            <!-- כרטיס ראשי + דרגה -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- כרטיס זהות -->
+                    <div class="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="h-24 bg-gradient-to-l from-indigo-600 to-emerald-500"></div>
+                        <div class="px-8 pb-8 flex flex-col items-center -mt-12 text-center">
+                            <div class="w-24 h-24 rounded-full bg-indigo-600 text-white border-4 border-white shadow-2xl flex items-center justify-center text-4xl font-black mb-4" id="prof-initials">?</div>
+                            <h2 class="text-2xl font-black text-slate-900 mb-1" id="prof-name">משתמש</h2>
+                            <p class="text-sm text-slate-400 font-bold italic mb-4" id="prof-email">-</p>
+                            <!-- תג דרגה -->
+                            <div class="flex items-center gap-2 px-5 py-2 rounded-full font-black text-sm mb-6" id="prof-rank-badge">
+                                <span class="material-symbols-outlined text-base" id="prof-rank-icon">stars</span>
+                                <span id="prof-rank">מתחיל/ה</span>
+                            </div>
+                            <!-- stats -->
+                            <div class="grid grid-cols-2 gap-3 w-full">
+                                <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100 text-right">
+                                    <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1">נקודות</p>
+                                    <p class="text-3xl font-black text-indigo-700 leading-none" id="prof-points">0</p>
                                 </div>
-                                <div class="bg-emerald-50 p-6 rounded-[2.5rem] border border-emerald-100">
-                                    <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">סיועים</p>
-                                    <p class="text-4xl font-black text-emerald-700 leading-none" id="prof-helps">0</p>
+                                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-right">
+                                    <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-1">סיועים</p>
+                                    <p class="text-3xl font-black text-emerald-700 leading-none" id="prof-helps">0</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl">
-                        <h3 class="font-black text-2xl mb-8 flex items-center gap-3 text-right">
-                            <span class="material-symbols-outlined text-amber-400 text-3xl">workspace_premium</span> מד מעורבות
+
+                    <!-- מד התקדמות לדרגה הבאה -->
+                    <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl">
+                        <h3 class="font-black text-lg mb-1 flex items-center gap-2 text-right">
+                            <span class="material-symbols-outlined text-amber-400 text-2xl">workspace_premium</span> התקדמות לדרגה הבאה
                         </h3>
-                        <div class="space-y-8 text-right">
-                            <div class="flex justify-between items-end text-sm font-bold">
-                                <span class="text-amber-400 text-lg" id="prof-rank">מתחיל/ה</span>
-                                <span class="text-slate-500" id="prof-meter-percent">0%</span>
+                        <p class="text-slate-500 text-xs font-bold mb-6 text-right" id="prof-next-rank-label">עוד X נקודות</p>
+                        <div class="h-4 bg-white/10 rounded-full overflow-hidden mb-3">
+                            <div class="h-full rounded-full meter-fill" id="prof-meter-fill" style="width:0%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs font-black">
+                            <span class="text-slate-500" id="prof-meter-from">0</span>
+                            <span class="text-slate-400" id="prof-meter-percent">0%</span>
+                            <span class="text-slate-500" id="prof-meter-to">50</span>
+                        </div>
+                    </div>
+
+                    <!-- מפתח נקודות -->
+                    <div class="bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm">
+                        <h4 class="font-black text-slate-700 text-sm mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-amber-500 text-lg">emoji_events</span> איך מרוויחים נקודות?
+                        </h4>
+                        <div class="space-y-3 text-right">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="bg-indigo-100 text-indigo-600 font-black px-3 py-1 rounded-full text-xs">+5</span>
+                                <span class="text-slate-600 font-bold">פרסום בקשה</span>
                             </div>
-                            <div class="h-5 bg-white/10 rounded-full overflow-hidden">
-                                <div class="h-full bg-gradient-to-l from-indigo-500 to-emerald-400 meter-fill" id="prof-meter-fill" style="width:0%"></div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="bg-emerald-100 text-emerald-600 font-black px-3 py-1 rounded-full text-xs">+10</span>
+                                <span class="text-slate-600 font-bold">רישום מומחיות</span>
                             </div>
-                            <p class="text-center text-xs text-slate-400 font-bold uppercase tracking-widest" id="prof-meter-text">עוד 200 נקודות לדרגת מאסטר</p>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="bg-amber-100 text-amber-600 font-black px-3 py-1 rounded-full text-xs">+15</span>
+                                <span class="text-slate-600 font-bold">הצעת סיוע</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="bg-purple-100 text-purple-600 font-black px-3 py-1 rounded-full text-xs">+30</span>
+                                <span class="text-slate-600 font-bold">סיוע מאושר ✓</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="lg:col-span-3">
-                    <div class="bg-white rounded-[3.5rem] shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50">
-                            <h3 class="text-2xl font-black text-slate-900">הפעילות שלי</h3>
-                            <span class="bg-indigo-100 text-indigo-600 px-5 py-2 rounded-full text-sm font-black" id="prof-act-count">0</span>
+
+                <div class="lg:col-span-3 space-y-6">
+                    <!-- מסלול דרגות -->
+                    <div class="bg-white rounded-[3rem] p-8 border border-slate-100 shadow-sm">
+                        <h3 class="text-xl font-black text-slate-900 mb-6 text-right">מסלול הדרגות</h3>
+                        <div class="flex items-center gap-0 overflow-x-auto pb-2" id="ranks-track"></div>
+                    </div>
+
+                    <!-- טבלת מובילים -->
+                    <div class="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50">
+                            <h3 class="text-xl font-black text-slate-900">🏆 לוח מובילים</h3>
+                            <span class="text-xs text-slate-400 font-bold italic">מתעדכן בזמן אמת</span>
+                        </div>
+                        <div id="leaderboard-body" class="divide-y divide-slate-50">
+                            <div class="p-8 text-center text-slate-300 font-bold text-sm italic">טוען...</div>
+                        </div>
+                    </div>
+
+                    <!-- פעילות אישית -->
+                    <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden">
+                        <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50">
+                            <h3 class="text-xl font-black text-slate-900">הפעילות שלי</h3>
+                            <span class="bg-indigo-100 text-indigo-600 px-4 py-1 rounded-full text-sm font-black" id="prof-act-count">0</span>
                         </div>
                         <div class="overflow-x-auto text-right">
-                            <table class="w-full text-right text-lg">
-                                <thead class="bg-white text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                                    <tr><th class="p-8">נושא</th><th class="p-8 text-center">סוג</th><th class="p-8 text-center">סטטוס</th></tr>
+                            <table class="w-full text-right">
+                                <thead class="bg-white text-slate-400 text-[9px] font-black uppercase tracking-widest">
+                                    <tr>
+                                        <th class="p-6">נושא</th>
+                                        <th class="p-6 text-center">סוג</th>
+                                        <th class="p-6 text-center">נקודות</th>
+                                        <th class="p-6 text-center">סטטוס</th>
+                                    </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-50 font-bold text-slate-700" id="table-my-history">
-                                    <tr><td colspan="3" class="p-24 text-center text-slate-300 italic">אין פעילות רשומה.</td></tr>
+                                <tbody class="divide-y divide-slate-50 font-bold text-slate-700 text-sm" id="table-my-history">
+                                    <tr><td colspan="4" class="p-16 text-center text-slate-300 italic">אין פעילות רשומה.</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -423,71 +420,18 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">טלפון ליצירת קשר</label>
-                    <input class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-indigo-500 outline-none font-black text-lg" id="v-phone" placeholder="050-0000000" required type="tel">
+                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">מתי נוח לך ופרטים נוספים</label>
+                    <textarea class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-indigo-500 outline-none font-bold text-lg leading-relaxed" id="v-note" placeholder="למשל: פנוי בשלישי בצהריים, יכול/ה לעזור עם..." required rows="4"></textarea>
                 </div>
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">מתי נוח לך? ופרטים נוספים</label>
-                    <textarea class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-indigo-500 outline-none font-bold text-lg leading-relaxed" id="v-note" placeholder="למשל: פנוי בשלישי בצהריים..." required rows="4"></textarea>
+                <div class="bg-blue-50 border border-blue-100 rounded-2xl px-6 py-4 flex items-start gap-3 text-blue-600 text-sm font-bold">
+                    <span class="material-symbols-outlined text-lg shrink-0 mt-0.5">shield</span>
+                    הפרטים שלך מועברים למנהלת בלבד — היא תיצור קשר ותחבר בינך לבין הצד השני.
                 </div>
-                <div class="pt-6">
+                <div class="pt-2">
                     <button class="w-full bg-emerald-600 text-white font-black py-6 rounded-[2.5rem] shadow-2xl hover:bg-emerald-700 active:scale-95 transition-all text-2xl flex items-center justify-center" type="submit" id="volunteer-submit-btn">
                         שלח פנייה למנהלת
                     </button>
                     <button class="w-full mt-4 text-slate-400 font-extrabold text-lg hover:text-slate-900 transition" onclick="closeModal('modal-volunteer')" type="button">ביטול וחזרה</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- ADD EXPERT MODAL -->
-<div class="modal-overlay hidden" id="modal-add-expert">
-    <div class="modal-container animate-pop">
-        <div class="absolute top-0 right-0 left-0 h-4 bg-emerald-600 z-20"></div>
-        <button class="absolute top-8 left-8 text-slate-400 hover:text-slate-900 z-30" onclick="closeModal('modal-add-expert')">
-            <span class="material-symbols-outlined text-4xl">close</span>
-        </button>
-        <div class="modal-scroll-area text-right">
-            <div class="text-center mb-10">
-                <div class="w-24 h-24 bg-emerald-50 text-emerald-600 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 shadow-inner">
-                    <span class="material-symbols-outlined text-6xl">verified</span>
-                </div>
-                <h3 class="text-4xl font-black text-slate-900 mb-3 tracking-tighter">הוסף את המומחיות שלך</h3>
-                <p class="text-slate-500 text-lg font-medium px-4 leading-relaxed">שתף מה אתה טוב בו — ותלמידים אחרים יוכלו לפנות אליך</p>
-            </div>
-            <form class="space-y-8 pb-10" id="add-expert-form">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">השם שלך</label>
-                        <input class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-2 border-slate-100 font-black outline-none cursor-not-allowed text-slate-500" id="exp-name" readonly type="text">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">כיתה / תפקיד</label>
-                        <input class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-black text-lg" id="exp-grade" placeholder="יא' 2 / מורה למתמטיקה" required type="text">
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">תחום המומחיות</label>
-                    <select class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold text-lg" id="exp-type">
-                        <option value="לימודי">לימודי</option>
-                        <option value="חברתי">חברתי</option>
-                        <option value="טכני/לוגיסטי">טכני/לוגיסטי</option>
-                    </select>
-                </div>
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">כותרת — במה אתה מומחה?</label>
-                    <input class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-black text-lg" id="exp-title" placeholder="מצגות קנבה, מתמטיקה 5 יח', Excel..." required type="text">
-                </div>
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">תיאור — איך תוכל לעזור?</label>
-                    <textarea class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold text-lg leading-relaxed" id="exp-desc" placeholder="תאר את הניסיון שלך ואיך תלמידים יכולים להיעזר בך..." required rows="4"></textarea>
-                </div>
-                <div class="pt-4">
-                    <button class="w-full bg-emerald-600 text-white font-black py-6 rounded-[2.5rem] shadow-2xl hover:bg-emerald-700 active:scale-95 transition-all text-2xl flex items-center justify-center" type="submit" id="add-expert-btn">
-                        פרסם את המומחיות שלי
-                    </button>
-                    <button class="w-full mt-4 text-slate-400 font-extrabold text-lg hover:text-slate-900 transition" onclick="closeModal('modal-add-expert')" type="button">ביטול וחזרה</button>
                 </div>
             </form>
         </div>
@@ -624,7 +568,6 @@ function initApp() {
     document.getElementById('prof-email').textContent     = currentUser.email;
     document.getElementById('post-name').value            = currentUser.name;
     document.getElementById('v-name').value               = currentUser.name;
-    document.getElementById('exp-name').value             = currentUser.name;
 
     if (currentUser.role === 'admin') {
         document.getElementById('link-admin').classList.remove('hidden');
@@ -761,76 +704,214 @@ function renderBoard() {
 function renderExperts() {
     const grid = document.getElementById('experts-grid');
     const all  = Object.entries(cachedPosts).filter(([,p]) => p.mode === 'expert').sort(([,a],[,b]) => b.time - a.time);
-    if (!all.length) { grid.innerHTML = '<div class="col-span-full py-16 text-center opacity-30 font-black text-2xl">אין מומחים רשומים עדיין — היה הראשון!</div>'; return; }
+    if (!all.length) { grid.innerHTML = '<div class="col-span-full py-24 text-center opacity-30 font-black text-2xl">אין מומחים רשומים כרגע</div>'; return; }
     grid.innerHTML = '';
     all.forEach(([key, p]) => {
-        const isOwn     = p.email === currentUser.email;
-        const isPending = Object.values(cachedVolunteers).some(v => v.postId === key && v.helperEmail === currentUser.email);
-        let actionBtn = '';
-        if (isOwn) {
-            actionBtn = '<div class="text-center text-emerald-500 font-bold py-4 bg-emerald-50 rounded-3xl border border-emerald-100 text-[11px] uppercase">המומחיות שלך פעילה ✓</div>';
-        } else if (isPending) {
-            actionBtn = '<div class="text-center text-indigo-600 font-bold py-5 bg-indigo-50 rounded-3xl flex items-center justify-center gap-2 text-sm"><span class="material-symbols-outlined text-lg">check_circle</span> בקשתך בטיפול</div>';
-        } else {
-            actionBtn = `<button onclick="openVolunteerModal('${key}','expert')" class="w-full bg-emerald-600 text-white font-black py-5 rounded-[2rem] hover:bg-emerald-700 transition shadow-xl active:scale-95 text-lg flex items-center justify-center gap-2"><span class="material-symbols-outlined">front_hand</span> בקש עזרה מהמומחה</button>`;
-        }
-        const card = document.createElement('div');
+        const isOwn = p.email === currentUser.email;
+        const card  = document.createElement('div');
         card.className = 'p-8 md:p-10 rounded-[3rem] shadow-sm transition-all animate-pop flex flex-col justify-between border-t-8 border-emerald-500 ' + (isOwn ? 'bg-emerald-50 border-2 border-emerald-200' : 'bg-white border border-slate-100');
         card.innerHTML = `
-            <div class="text-right mb-5">
-                <div class="flex justify-between items-center mb-5">
-                    <span class="bg-emerald-50 text-emerald-600 text-[10px] font-black px-4 py-1.5 rounded-full border border-emerald-100 uppercase">${escHtml(p.type)}</span>
-                    ${isOwn ? '<span class="text-[10px] font-black text-emerald-600 italic px-3 bg-white rounded-full border border-emerald-100">שלי</span>' : ''}
+            <div class="text-right">
+                <div class="flex justify-between items-center mb-8">
+                    <span class="bg-emerald-50 text-emerald-600 text-[10px] font-black px-4 py-1.5 rounded-full border border-emerald-100 uppercase">מומחה/ית</span>
+                    ${isOwn ? '<span class="text-[10px] font-black text-emerald-600 italic px-3 bg-white rounded-full">פרופיל שלך</span>' : ''}
                 </div>
                 <h3 class="text-2xl font-black text-slate-900 mb-3 leading-tight">${escHtml(p.title)}</h3>
-                <p class="text-slate-500 text-base leading-relaxed mb-6" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${escHtml(p.desc)}</p>
-                <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black text-xl shrink-0">${escHtml(p.creator[0])}</div>
+                <p class="text-slate-500 text-base leading-relaxed mb-10">${escHtml(p.desc)}</p>
+                <div class="flex items-center gap-5 mb-10">
+                    <div class="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black text-3xl shrink-0">${escHtml(p.creator[0])}</div>
                     <div class="text-right">
-                        <p class="text-lg font-black text-slate-900 leading-none mb-1">${escHtml(p.creator)}</p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">${escHtml(p.grade || p.role)}</p>
+                        <p class="text-xl font-black text-slate-900 leading-none mb-1">${escHtml(p.creator)}</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mt-1">${escHtml(p.grade || p.role)}</p>
                     </div>
                 </div>
             </div>
-            ${actionBtn}`;
+            ${!isOwn ? `<button onclick="openVolunteerModal('${key}','expert')" class="w-full bg-emerald-600 text-white font-black py-5 rounded-[2rem] hover:bg-emerald-700 transition shadow-xl active:scale-95 text-lg">בקש סיוע</button>` : '<div class="text-center text-emerald-500 font-bold py-4 bg-white rounded-3xl border border-emerald-100 text-[10px] uppercase">מומחה פעיל</div>'}`;
         grid.appendChild(card);
     });
 }
 
 // ═══════════════════════════════════════════════
-//  RENDER: PROFILE
+//  REWARDS SYSTEM
 // ═══════════════════════════════════════════════
-function renderProfile() {
-    if (!currentUser) return;
-    const myPosts = Object.values(cachedPosts).filter(p => p.email === currentUser.email);
-    const myVols  = Object.values(cachedVolunteers).filter(v => v.helperEmail === currentUser.email);
-    const myAct   = [
-        ...myPosts.map(p => ({ title: p.title, actType: 'פרסום', status: p.status })),
-        ...myVols.map(v  => ({ title: v.postTitle, actType: 'התנדבות', status: v.status }))
-    ];
-    document.getElementById('prof-act-count').textContent = myAct.length;
-    document.getElementById('table-my-history').innerHTML = myAct.length
-        ? myAct.map(a => `<tr>
-            <td class="p-8">${escHtml(a.title)}</td>
-            <td class="p-8 text-center text-[10px] font-black text-slate-400 uppercase">${a.actType}</td>
-            <td class="p-8 text-center"><span class="px-5 py-2 rounded-full text-[10px] font-black uppercase ${a.status==='open'?'bg-indigo-50 text-indigo-600':a.status==='pending'?'bg-amber-50 text-amber-600':'bg-emerald-50 text-emerald-600'}">${a.status==='open'?'פתוח':a.status==='pending'?'בטיפול':'בוצע'}</span></td>
-          </tr>`).join('')
-        : '<tr><td colspan="3" class="p-24 text-center text-slate-300 italic">אין פעילות רשומה.</td></tr>';
-    updateStats();
+const RANKS = [
+    { name: 'מתחיל/ה',     min: 0,   max: 49,  color: 'bg-slate-100 text-slate-500',  bar: 'bg-slate-400',     icon: 'person' },
+    { name: 'פעיל/ה',      min: 50,  max: 99,  color: 'bg-blue-100 text-blue-600',    bar: 'bg-blue-500',      icon: 'thumb_up' },
+    { name: 'תורם/ת',      min: 100, max: 174, color: 'bg-indigo-100 text-indigo-600',bar: 'bg-indigo-500',    icon: 'volunteer_activism' },
+    { name: 'מומחה/ית',    min: 175, max: 274, color: 'bg-emerald-100 text-emerald-600',bar:'bg-emerald-500',  icon: 'verified' },
+    { name: 'מאסטר',       min: 275, max: 399, color: 'bg-amber-100 text-amber-600',  bar: 'bg-amber-500',     icon: 'workspace_premium' },
+    { name: '⭐ אלוף/ת',   min: 400, max: Infinity, color: 'bg-purple-100 text-purple-600', bar: 'bg-gradient-to-l from-purple-500 to-pink-500', icon: 'military_tech' }
+];
+
+const POINTS_MAP = {
+    post_request: 5,   // פרסום בקשה
+    post_expert: 10,   // רישום מומחיות
+    volunteer: 15,     // הצעת סיוע
+    approved: 30       // סיוע אושר
+};
+
+function getRank(pts) {
+    return RANKS.find(r => pts >= r.min && pts <= r.max) || RANKS[0];
+}
+
+function calcUserPoints(email) {
+    let pts = 0;
+    Object.values(cachedPosts).forEach(p => {
+        if (p.email !== email) return;
+        pts += p.mode === 'expert' ? POINTS_MAP.post_expert : POINTS_MAP.post_request;
+    });
+    Object.values(cachedVolunteers).forEach(v => {
+        if (v.helperEmail === email) pts += POINTS_MAP.volunteer;
+    });
+    Object.values(cachedHistory).forEach(m => {
+        if (m.helperEmail === email && m.status === 'approved') pts += POINTS_MAP.approved;
+    });
+    return pts;
 }
 
 function updateStats() {
     if (!currentUser) return;
+    const pts  = calcUserPoints(currentUser.email);
+    const rank = getRank(pts);
     const approved = Object.values(cachedHistory).filter(m => m.helperEmail === currentUser.email && m.status === 'approved').length;
-    const points   = approved * 20;
-    document.getElementById('nav-user-points').textContent    = points;
-    document.getElementById('prof-points').textContent        = points;
-    document.getElementById('prof-helps').textContent         = approved;
-    const pct = Math.min((points / 200) * 100, 100);
-    document.getElementById('prof-meter-fill').style.width    = pct + '%';
-    document.getElementById('prof-meter-percent').textContent = Math.floor(pct) + '%';
-    document.getElementById('prof-rank').textContent          = points >= 200 ? 'מאסטר בקהילה' : points >= 60 ? 'פעיל/ה חברתית' : 'מתחיל/ה';
-    document.getElementById('prof-meter-text').textContent    = points >= 200 ? 'הגעת לדרגת שיא המעורבות!' : `עוד ${200 - points} נקודות לדרגת מאסטר`;
+
+    // ניווט
+    document.getElementById('nav-user-points').textContent = pts;
+
+    // פרופיל
+    document.getElementById('prof-points').textContent = pts;
+    document.getElementById('prof-helps').textContent  = approved;
+
+    // תג דרגה
+    const badge = document.getElementById('prof-rank-badge');
+    badge.className = `flex items-center gap-2 px-5 py-2 rounded-full font-black text-sm mb-6 ${rank.color}`;
+    document.getElementById('prof-rank-icon').textContent = rank.icon;
+    document.getElementById('prof-rank').textContent      = rank.name;
+
+    // מד התקדמות
+    const nextRank = RANKS.find(r => r.min > pts);
+    const fromPts  = rank.min;
+    const toPts    = nextRank ? nextRank.min : pts;
+    const progress = nextRank ? Math.min(((pts - fromPts) / (toPts - fromPts)) * 100, 100) : 100;
+    const fillEl   = document.getElementById('prof-meter-fill');
+    fillEl.className       = `h-full rounded-full meter-fill ${rank.bar}`;
+    fillEl.style.width     = progress + '%';
+    document.getElementById('prof-meter-percent').textContent   = Math.floor(progress) + '%';
+    document.getElementById('prof-meter-from').textContent      = fromPts;
+    document.getElementById('prof-meter-to').textContent        = nextRank ? toPts : '∞';
+    document.getElementById('prof-next-rank-label').textContent = nextRank
+        ? `עוד ${toPts - pts} נקודות לדרגת "${nextRank.name}"`
+        : '🎉 הגעת לדרגת שיא!';
+
+    // מסלול דרגות
+    renderRanksTrack(pts);
+
+    // לוח מובילים
+    renderLeaderboard();
+}
+
+function renderRanksTrack(pts) {
+    const el = document.getElementById('ranks-track');
+    if (!el) return;
+    el.innerHTML = RANKS.filter(r => r.max !== Infinity).map((r, i) => {
+        const done    = pts >= r.max + 1;
+        const current = pts >= r.min && pts <= r.max;
+        return `
+        <div class="flex items-center flex-shrink-0">
+            <div class="flex flex-col items-center gap-2 w-20 md:w-24">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center shadow-sm border-2 font-black text-sm transition-all
+                    ${done ? 'bg-emerald-500 border-emerald-400 text-white' : current ? `${r.color} border-current scale-110 shadow-lg` : 'bg-slate-100 border-slate-200 text-slate-400'}">
+                    <span class="material-symbols-outlined text-xl">${r.icon}</span>
+                </div>
+                <p class="text-[10px] font-black text-center leading-tight ${current ? 'text-slate-900' : 'text-slate-400'}">${r.name}</p>
+                <p class="text-[9px] font-bold text-slate-300">${r.min}+</p>
+            </div>
+            ${i < RANKS.length - 2 ? `<div class="w-6 md:w-10 h-1 rounded-full mx-1 flex-shrink-0 ${done ? 'bg-emerald-400' : 'bg-slate-200'}"></div>` : ''}
+        </div>`;
+    }).join('');
+}
+
+function renderLeaderboard() {
+    const el = document.getElementById('leaderboard-body');
+    if (!el) return;
+
+    // צבור נקודות לכל משתמש
+    const scoreMap = {};
+
+    Object.values(cachedPosts).forEach(p => {
+        if (!p.email) return;
+        scoreMap[p.email] = scoreMap[p.email] || { name: p.creator, pts: 0 };
+        scoreMap[p.email].pts += p.mode === 'expert' ? POINTS_MAP.post_expert : POINTS_MAP.post_request;
+    });
+    Object.values(cachedVolunteers).forEach(v => {
+        if (!v.helperEmail) return;
+        scoreMap[v.helperEmail] = scoreMap[v.helperEmail] || { name: v.helperName, pts: 0 };
+        scoreMap[v.helperEmail].pts += POINTS_MAP.volunteer;
+    });
+    Object.values(cachedHistory).forEach(m => {
+        if (!m.helperEmail || m.status !== 'approved') return;
+        scoreMap[m.helperEmail] = scoreMap[m.helperEmail] || { name: m.helper, pts: 0 };
+        scoreMap[m.helperEmail].pts += POINTS_MAP.approved;
+    });
+
+    const sorted = Object.entries(scoreMap).sort(([,a],[,b]) => b.pts - a.pts).slice(0, 10);
+
+    if (!sorted.length) {
+        el.innerHTML = '<div class="p-10 text-center text-slate-300 font-bold text-sm italic">עוד אין פעילות — היה הראשון!</div>';
+        return;
+    }
+
+    const medals = ['🥇','🥈','🥉'];
+    el.innerHTML = sorted.map(([email, data], i) => {
+        const rank    = getRank(data.pts);
+        const isMe    = currentUser && email === currentUser.email;
+        return `
+        <div class="flex items-center gap-4 px-6 py-4 ${isMe ? 'bg-indigo-50 border-r-4 border-indigo-500' : 'hover:bg-slate-50'} transition">
+            <div class="w-10 text-center font-black text-lg text-slate-400 shrink-0">${medals[i] || `${i+1}`}</div>
+            <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-black text-lg shrink-0">${data.name[0].toUpperCase()}</div>
+            <div class="flex-1 text-right">
+                <p class="font-black text-slate-900 text-sm ${isMe ? 'text-indigo-700' : ''}">${escHtml(data.name)}${isMe ? ' (אתה)' : ''}</p>
+                <span class="inline-block text-[10px] font-black px-3 py-0.5 rounded-full ${rank.color}">${rank.name}</span>
+            </div>
+            <div class="text-right shrink-0">
+                <p class="font-black text-indigo-600 text-lg leading-none">${data.pts}</p>
+                <p class="text-[9px] text-slate-400 font-bold">נקודות</p>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderProfile() {
+    if (!currentUser) return;
+    const myPosts = Object.values(cachedPosts).filter(p => p.email === currentUser.email);
+    const myVols  = Object.values(cachedVolunteers).filter(v => v.helperEmail === currentUser.email);
+
+    const actRows = [
+        ...myPosts.map(p => ({
+            title: p.title,
+            actType: p.mode === 'expert' ? 'מומחיות' : 'בקשה',
+            pts: p.mode === 'expert' ? POINTS_MAP.post_expert : POINTS_MAP.post_request,
+            status: p.status
+        })),
+        ...myVols.map(v => ({
+            title: v.postTitle,
+            actType: 'הצעת סיוע',
+            pts: v.status === 'pending' ? POINTS_MAP.volunteer : POINTS_MAP.volunteer + POINTS_MAP.approved,
+            status: v.status
+        }))
+    ];
+
+    document.getElementById('prof-act-count').textContent = actRows.length;
+    document.getElementById('table-my-history').innerHTML = actRows.length
+        ? actRows.map(a => `<tr class="hover:bg-slate-50 transition">
+            <td class="p-5 text-right">${escHtml(a.title)}</td>
+            <td class="p-5 text-center"><span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-black uppercase">${a.actType}</span></td>
+            <td class="p-5 text-center"><span class="text-indigo-600 font-black text-sm">+${a.pts}</span></td>
+            <td class="p-5 text-center"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${a.status==='open'?'bg-blue-50 text-blue-600':a.status==='pending'?'bg-amber-50 text-amber-600':'bg-emerald-50 text-emerald-600'}">${a.status==='open'?'פתוח':a.status==='pending'?'בטיפול':'בוצע'}</span></td>
+          </tr>`).join('')
+        : '<tr><td colspan="4" class="p-16 text-center text-slate-300 italic">אין פעילות רשומה.</td></tr>';
+
+    updateStats();
 }
 
 // ═══════════════════════════════════════════════
@@ -902,43 +983,6 @@ async function adminAction(vid, status) {
 }
 
 // ═══════════════════════════════════════════════
-//  ADD EXPERT MODAL
-// ═══════════════════════════════════════════════
-function openAddExpertModal() {
-    document.getElementById('exp-name').value  = currentUser.name;
-    document.getElementById('exp-grade').value = '';
-    document.getElementById('exp-title').value = '';
-    document.getElementById('exp-desc').value  = '';
-    document.getElementById('modal-add-expert').classList.remove('hidden');
-    document.querySelector('#modal-add-expert .modal-scroll-area').scrollTop = 0;
-}
-
-document.getElementById('add-expert-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (isRateLimited('last_expert', 10000)) { showToast('⏳ המתן מעט לפני פרסום נוסף'); return; }
-    const title = sanitize(document.getElementById('exp-title').value, 100);
-    const desc  = sanitize(document.getElementById('exp-desc').value, 1000);
-    const grade = sanitize(document.getElementById('exp-grade').value, 40);
-    if (!title || !desc || !grade) { showToast('❌ יש למלא את כל השדות'); return; }
-    const btn = document.getElementById('add-expert-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> מפרסם...';
-    try {
-        await db.ref('posts').push({
-            creator: currentUser.name, email: currentUser.email,
-            role: 'מומחה', grade,
-            type: document.getElementById('exp-type').value,
-            title, desc, status: 'open', mode: 'expert', time: Date.now()
-        });
-        closeModal('modal-add-expert');
-        showToast('✅ המומחיות שלך פורסמה בלוח!');
-        switchTab('experts');
-    } catch(err) { showToast('❌ שגיאה — נסה שוב'); console.error(err); }
-    btn.disabled = false;
-    btn.textContent = 'פרסם את המומחיות שלי';
-});
-
-// ═══════════════════════════════════════════════
 //  VOLUNTEER MODAL
 // ═══════════════════════════════════════════════
 function openVolunteerModal(postId, mode) {
@@ -946,7 +990,6 @@ function openVolunteerModal(postId, mode) {
     document.getElementById('v-modal-title').textContent = mode === 'request' ? 'מתאים לי לעזור' : 'בקשת סיוע ממומחה';
     document.getElementById('v-name').value  = currentUser.name;
     document.getElementById('v-grade').value = '';
-    document.getElementById('v-phone').value = '';
     document.getElementById('v-note').value  = '';
     document.getElementById('modal-volunteer').classList.remove('hidden');
     document.querySelector('#modal-volunteer .modal-scroll-area').scrollTop = 0;
@@ -958,15 +1001,18 @@ document.getElementById('volunteer-form').addEventListener('submit', async (e) =
     const post = cachedPosts[activePostId];
     if (!post) { showToast('❌ הבקשה לא נמצאה'); return; }
     const grade = sanitize(document.getElementById('v-grade').value, 20);
-    const phone = sanitize(document.getElementById('v-phone').value, 20);
     const note  = sanitize(document.getElementById('v-note').value, 500);
-    if (!grade || !phone || !note) { showToast('❌ יש למלא את כל השדות'); return; }
+    if (!grade || !note) { showToast('❌ יש למלא כיתה ופרטים'); return; }
 
     const btn = document.getElementById('volunteer-submit-btn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> שולח...';
     try {
-        await db.ref('volunteers').push({ postId: activePostId, postTitle: post.title, helperName: currentUser.name, helperEmail: currentUser.email, helperGrade: grade, helperPhone: phone, note, status: 'pending', time: Date.now() });
+        await db.ref('volunteers').push({
+            postId: activePostId, postTitle: post.title,
+            helperName: currentUser.name, helperEmail: currentUser.email,
+            helperGrade: grade, note, status: 'pending', time: Date.now()
+        });
         closeModal('modal-volunteer');
         showToast('📬 הפנייה נשלחה! המנהלת תעדכן אותך.');
         switchTab('profile');
@@ -989,7 +1035,7 @@ function showToast(msg) {
     setTimeout(() => el.remove(), 3500);
 }
 
-['modal-volunteer','modal-logout','modal-add-expert'].forEach(id => {
+['modal-volunteer','modal-logout'].forEach(id => {
     document.getElementById(id).addEventListener('click', function(e) { if (e.target===this) closeModal(id); });
 });
 
