@@ -735,12 +735,9 @@ function renderExperts() {
 //  REWARDS SYSTEM
 // ═══════════════════════════════════════════════
 const RANKS = [
-    { name: 'מתחיל/ה',     min: 0,   max: 49,  color: 'bg-slate-100 text-slate-500',  bar: 'bg-slate-400',     icon: 'person' },
-    { name: 'פעיל/ה',      min: 50,  max: 99,  color: 'bg-blue-100 text-blue-600',    bar: 'bg-blue-500',      icon: 'thumb_up' },
-    { name: 'תורם/ת',      min: 100, max: 174, color: 'bg-indigo-100 text-indigo-600',bar: 'bg-indigo-500',    icon: 'volunteer_activism' },
-    { name: 'מומחה/ית',    min: 175, max: 274, color: 'bg-emerald-100 text-emerald-600',bar:'bg-emerald-500',  icon: 'verified' },
-    { name: 'מאסטר',       min: 275, max: 399, color: 'bg-amber-100 text-amber-600',  bar: 'bg-amber-500',     icon: 'workspace_premium' },
-    { name: '⭐ אלוף/ת',   min: 400, max: Infinity, color: 'bg-purple-100 text-purple-600', bar: 'bg-gradient-to-l from-purple-500 to-pink-500', icon: 'military_tech' }
+    { name: 'מתחיל',  min: 0,   max: 99,        color: 'bg-slate-100 text-slate-600',    bar: 'bg-slate-500',   icon: 'person' },
+    { name: 'מומחה',  min: 100, max: 249,       color: 'bg-emerald-100 text-emerald-700',bar: 'bg-emerald-500', icon: 'verified' },
+    { name: 'מאסטר',  min: 250, max: Infinity,  color: 'bg-amber-100 text-amber-700',    bar: 'bg-amber-500',   icon: 'workspace_premium' }
 ];
 
 const POINTS_MAP = {
@@ -752,6 +749,21 @@ const POINTS_MAP = {
 
 function getRank(pts) {
     return RANKS.find(r => pts >= r.min && pts <= r.max) || RANKS[0];
+}
+
+function maybeCelebrateRankUp(email, newRank) {
+    try {
+        const key = 'rank_' + email;
+        const prevName = localStorage.getItem(key);
+        if (prevName && prevName !== newRank.name) {
+            const prevRank = RANKS.find(r => r.name === prevName);
+            const promoted = !prevRank || newRank.min > prevRank.min;
+            if (promoted) showToast(`🎉 כל הכבוד! עלית לדרגת "${newRank.name}"`);
+        }
+        localStorage.setItem(key, newRank.name);
+    } catch (e) {
+        // ignore (private mode / blocked storage)
+    }
 }
 
 function calcUserPoints(email) {
@@ -773,6 +785,7 @@ function updateStats() {
     if (!currentUser) return;
     const pts  = calcUserPoints(currentUser.email);
     const rank = getRank(pts);
+    maybeCelebrateRankUp(currentUser.email, rank);
     const approved = Object.values(cachedHistory).filter(m => m.helperEmail === currentUser.email && m.status === 'approved').length;
 
     // ניווט
@@ -813,9 +826,10 @@ function updateStats() {
 function renderRanksTrack(pts) {
     const el = document.getElementById('ranks-track');
     if (!el) return;
-    el.innerHTML = RANKS.filter(r => r.max !== Infinity).map((r, i) => {
-        const done    = pts >= r.max + 1;
-        const current = pts >= r.min && pts <= r.max;
+    el.innerHTML = RANKS.map((r, i) => {
+        const isInfinity = (r.max === Infinity);
+        const done    = !isInfinity && pts >= (r.max + 1);
+        const current = pts >= r.min && (isInfinity || pts <= r.max);
         return `
         <div class="flex items-center flex-shrink-0">
             <div class="flex flex-col items-center gap-2 w-20 md:w-24">
@@ -826,7 +840,7 @@ function renderRanksTrack(pts) {
                 <p class="text-[10px] font-black text-center leading-tight ${current ? 'text-slate-900' : 'text-slate-400'}">${r.name}</p>
                 <p class="text-[9px] font-bold text-slate-300">${r.min}+</p>
             </div>
-            ${i < RANKS.length - 2 ? `<div class="w-6 md:w-10 h-1 rounded-full mx-1 flex-shrink-0 ${done ? 'bg-emerald-400' : 'bg-slate-200'}"></div>` : ''}
+            ${i < RANKS.length - 1 ? `<div class="w-6 md:w-10 h-1 rounded-full mx-1 flex-shrink-0 ${done ? 'bg-emerald-400' : 'bg-slate-200'}"></div>` : ''}
         </div>`;
     }).join('');
 }
@@ -942,9 +956,7 @@ function renderAdmin() {
                         <div class="absolute -top-3 right-10 bg-emerald-600 text-white px-5 py-1 rounded-full text-[10px] font-black uppercase shadow">הצעת סיוע</div>
                         <p class="font-black text-indigo-700 text-2xl mb-2">${escHtml(v.helperName)} (${escHtml(v.helperGrade)})</p>
                         <p class="text-slate-700 font-bold mb-6 italic leading-relaxed text-xl">"${escHtml(v.note)}"</p>
-                        <div class="flex items-center gap-3 text-slate-600 font-black text-lg">
-                            <span class="material-symbols-outlined text-2xl">call</span> ${escHtml(v.helperPhone)}
-                        </div>
+                        <div class="text-slate-500 font-bold text-sm italic">📌 פרטי קשר נשמרים אצל המנהלת בלבד</div>
                     </div>
                 </div>
                 <div class="flex flex-col gap-4 justify-center shrink-0 w-full md:w-80">
