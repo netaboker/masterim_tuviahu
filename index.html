@@ -7,594 +7,1001 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <style>
         :root { --primary: #4f46e5; --secondary: #10b981; }
         body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
-        .glass-nav { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-top: 1px solid rgba(0,0,0,0.05); }
-        .tab-btn.active { color: var(--primary); }
-        .tab-btn.active .icon-fill { font-variation-settings: 'FILL' 1; }
-        .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #334155; color: white; padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px; z-index: 100; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); animation: slideUp 0.3s ease-out; white-space: nowrap; }
-        @keyframes slideUp { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
-        /* לודר פשוט */
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .glass-nav { background: rgba(255,255,255,0.95); backdrop-filter: blur(14px); }
+        .animate-pop { animation: pop 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+        @keyframes pop { 0%{transform:scale(0.96);opacity:0} 100%{transform:scale(1);opacity:1} }
+        .own-post-card { border: 2px solid var(--primary) !important; background: #f5f3ff; }
+        .expert-card { border-top: 6px solid var(--secondary); }
+        .meter-fill { transition: width 1.5s cubic-bezier(0.65,0,0.35,1); }
+        .modal-overlay { position:fixed; inset:0; z-index:5000; display:flex; align-items:center; justify-content:center; background:rgba(15,23,42,0.7); backdrop-filter:blur(8px); padding:1rem; }
+        .modal-container { width:100%; max-width:650px; max-height:90vh; background:white; border-radius:2rem; overflow:hidden; display:flex; flex-direction:column; position:relative; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); }
+        .modal-scroll-area { overflow-y:auto; flex:1; padding:2.5rem; }
+        @media(max-width:640px){
+            .modal-container{max-height:100vh;height:100%;border-radius:0;}
+            .modal-scroll-area{padding:1.5rem;}
+            .mobile-menu-drawer{transform:translateX(100%);transition:transform 0.3s ease-in-out;}
+            .mobile-menu-drawer.active{transform:translateX(0);}
+        }
+        .admin-pulse { animation: pulse-red 2s infinite; }
+        @keyframes pulse-red { 0%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)} 70%{box-shadow:0 0 0 12px rgba(239,68,68,0)} 100%{box-shadow:0 0 0 0 rgba(239,68,68,0)} }
+        input, select, textarea { font-size: 16px !important; }
+        .nav-link-active { color: var(--primary) !important; font-weight: 800 !important; border-bottom: 2px solid var(--primary); }
+        .full-screen-container { width: 96%; max-width: 1600px; margin: 0 auto; }
+        .toast { position:fixed; top:5rem; left:50%; transform:translateX(-50%); background:#0f172a; color:white; padding:1rem 2rem; border-radius:2rem; box-shadow:0 20px 40px rgba(0,0,0,0.3); z-index:9999; font-weight:900; font-size:1.1rem; animation:pop 0.4s cubic-bezier(0.175,0.885,0.32,1.275); white-space:nowrap; }
+        @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        .spinner { border:3px solid rgba(255,255,255,0.3); border-top:3px solid white; border-radius:50%; width:20px; height:20px; animation:spin 0.8s linear infinite; display:inline-block; vertical-align:middle; margin-right:8px; }
+        #loading-screen { position:fixed; inset:0; z-index:9000; background:#4f46e5; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1.5rem; }
+        .big-spinner { border:4px solid rgba(255,255,255,0.3); border-top:4px solid white; border-radius:50%; width:52px; height:52px; animation:spin 0.8s linear infinite; }
     </style>
 </head>
-<body class="text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900">
+<body class="antialiased text-slate-900 overflow-x-hidden">
 
-    <header class="fixed top-0 inset-x-0 bg-white shadow-sm z-30 h-16 px-4 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">M</div>
-            <h1 class="font-extrabold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">המאסטרים של טוביהו</h1>
-        </div>
-        <div id="conn-status" class="w-2.5 h-2.5 rounded-full bg-slate-300 transition-colors duration-300"></div>
-    </header>
+<!-- LOADING SCREEN -->
+<div id="loading-screen">
+    <div class="big-spinner"></div>
+    <p style="color:white;font-weight:900;font-size:1.25rem;">מתחבר למסד הנתונים...</p>
+</div>
 
-    <main id="main-content" class="w-full">
-        
-        <div id="tab-feed" class="tab-content pt-20 pb-24 px-4 max-w-md mx-auto min-h-screen">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-slate-800">לוח בקשות</h2>
-                <button onclick="document.getElementById('modal-post').classList.remove('hidden')" class="bg-indigo-600 text-white p-2 rounded-full shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all">
-                    <span class="material-symbols-outlined block">add</span>
+<!-- LOGIN -->
+<div class="fixed inset-0 z-[6000] flex items-center justify-center bg-indigo-600 p-4 hidden" id="view-login">
+    <div class="bg-white w-full max-w-md rounded-[3rem] shadow-2xl p-10 md:p-14 animate-pop text-center relative overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-50 rounded-full opacity-50"></div>
+        <div class="relative z-10 flex flex-col items-center">
+            <div class="w-24 h-24 bg-indigo-100 text-indigo-600 rounded-3xl flex items-center justify-center mb-8 shadow-inner">
+                <span class="material-symbols-outlined text-6xl font-bold">school</span>
+            </div>
+            <h1 class="text-4xl font-black text-slate-900 mb-2 tracking-tight">המאסטרים של טוביהו</h1>
+            <p class="text-slate-500 mb-10 font-medium leading-relaxed text-lg italic">קהילה שיתופית שעוזרת יחד</p>
+            <form class="space-y-4 text-right w-full" id="login-form">
+                <div class="space-y-1">
+                    <label class="text-xs font-black text-slate-400 mr-2 uppercase tracking-widest">אימייל להתחברות</label>
+                    <input class="w-full px-6 py-5 rounded-3xl border-2 border-slate-100 focus:border-indigo-500 outline-none transition font-bold text-lg" id="login-email" placeholder="name@gmail.com" required type="email">
+                </div>
+                <button class="w-full bg-slate-950 hover:bg-indigo-700 text-white font-black py-5 rounded-3xl transition-all shadow-xl active:scale-95 text-xl flex items-center justify-center" type="submit" id="login-btn">
+                    כניסה למערכת
                 </button>
-            </div>
-
-            <div class="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide -mx-4 px-4">
-                <button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-indigo-100 text-indigo-700 font-bold text-sm">הכל</button>
-                <button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 font-semibold text-sm">לימודים</button>
-                <button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 font-semibold text-sm">טכני</button>
-                <button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 font-semibold text-sm">התנדבות</button>
-            </div>
-
-            <div id="feed-list" class="space-y-4">
-                <div class="flex justify-center mt-10"><div class="loader"></div></div>
+            </form>
+            <div class="mt-8 flex items-center justify-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                <span class="material-symbols-outlined text-sm">security</span> גישה מאובטחת
             </div>
         </div>
+    </div>
+</div>
 
-        <div id="tab-experts" class="tab-content hidden pt-20 pb-24 px-4 max-w-md mx-auto min-h-screen">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-slate-800">קהילת המומחים</h2>
-                <button onclick="document.getElementById('modal-add-expert').classList.remove('hidden')" class="bg-indigo-600 text-white p-2 rounded-full shadow-lg hover:bg-indigo-700 transition">
-                    <span class="material-symbols-outlined block">add</span>
+<!-- MAIN APP -->
+<div class="flex flex-col min-h-screen hidden" id="main-app">
+    <nav class="sticky top-0 z-50 glass-nav border-b border-slate-200 shadow-sm">
+        <div class="full-screen-container px-2">
+            <div class="flex justify-between h-16 md:h-24 items-center">
+                <button class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600" onclick="toggleMobileMenu(true)">
+                    <span class="material-symbols-outlined text-3xl">menu</span>
                 </button>
-            </div>
-            <p class="text-slate-500 text-sm mb-4">מומחים במשהו? פרסמו כאן ואחרים יוכלו להיעזר בכם!</p>
-            
-            <div id="experts-list" class="space-y-4">
-                <div class="flex justify-center mt-10"><div class="loader"></div></div>
-            </div>
-        </div>
-
-        <div id="tab-profile" class="tab-content hidden pt-20 pb-24 px-4 max-w-md mx-auto min-h-screen">
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center mb-6 relative overflow-hidden">
-                <div class="absolute top-0 inset-x-0 h-16 bg-gradient-to-r from-indigo-50 to-purple-50"></div>
-                <div class="w-20 h-20 mx-auto rounded-full bg-indigo-100 border-4 border-white shadow-sm flex items-center justify-center relative z-10 mb-3 text-3xl">👤</div>
-                <h2 id="prof-name" class="text-2xl font-bold text-slate-800">...</h2>
-                <div class="flex justify-center gap-4 mt-4 text-sm font-semibold">
-                    <div class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-xl"><span class="block text-xl">5</span>עזרתי</div>
-                    <div class="bg-purple-50 text-purple-700 px-4 py-2 rounded-xl"><span class="block text-xl">2</span>נעזרתי</div>
+                <div class="flex items-center gap-3 cursor-pointer group shrink-0" onclick="switchTab('home')">
+                    <div class="p-1.5 md:p-3 bg-indigo-600 rounded-xl text-white shadow-lg group-hover:scale-110 transition">
+                        <span class="material-symbols-outlined text-xl md:text-3xl">school</span>
+                    </div>
+                    <span class="text-xl md:text-2xl font-black text-indigo-950 tracking-tighter hidden sm:block">המאסטרים של טוביהו</span>
+                </div>
+                <div class="hidden md:flex flex-1 justify-center gap-10">
+                    <button class="nav-item-link text-slate-500 font-black uppercase text-sm tracking-widest hover:text-indigo-600 transition py-2" id="link-board" onclick="switchTab('board')">לוח בקשות</button>
+                    <button class="nav-item-link text-slate-500 font-black uppercase text-sm tracking-widest hover:text-emerald-600 transition py-2" id="link-experts" onclick="switchTab('experts')">לוח מומחים</button>
+                    <button class="nav-item-link text-slate-500 font-black uppercase text-sm tracking-widest hover:text-indigo-600 transition py-2" id="link-request" onclick="switchTab('request')">פרסום חדש</button>
+                    <button class="nav-item-link text-red-600 font-black uppercase text-sm tracking-widest relative py-2 hidden" id="link-admin" onclick="switchTab('admin')">
+                        פאנל ניהול
+                        <span class="absolute -top-1 -right-4 w-3 h-3 bg-red-600 rounded-full border-2 border-white hidden" id="admin-notif-dot"></span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 md:gap-4 shrink-0">
+                    <div class="hidden sm:block text-right ml-2">
+                        <p class="font-bold text-slate-900 text-sm md:text-base" id="nav-user-name">משתמש</p>
+                        <div class="flex items-center justify-end gap-1 text-emerald-600 font-black">
+                            <span class="text-sm md:text-lg" id="nav-user-points">0</span>
+                            <span class="material-symbols-outlined text-sm md:text-lg leading-none">stars</span>
+                        </div>
+                    </div>
+                    <button class="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-indigo-600 transition shadow-sm" onclick="switchTab('profile')">
+                        <span class="material-symbols-outlined text-2xl md:text-3xl">account_circle</span>
+                    </button>
+                    <button class="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 transition shadow-sm" onclick="triggerLogout()">
+                        <span class="material-symbols-outlined text-2xl md:text-3xl">logout</span>
+                    </button>
                 </div>
             </div>
-
-            <h3 class="font-bold text-lg mb-3 text-slate-800 px-1">הבקשות שלי</h3>
-            <div id="my-posts-list" class="space-y-3">
-                </div>
-
-            <button onclick="document.getElementById('modal-logout').classList.remove('hidden')" class="w-full mt-8 py-3 text-red-500 font-bold bg-red-50 rounded-xl hover:bg-red-100 transition">
-                החלף משתמש / התנתק
-            </button>
-        </div>
-
-    </main>
-
-    <nav class="fixed bottom-0 inset-x-0 glass-nav z-30 pb-safe">
-        <div class="flex justify-around items-center h-16 px-2 max-w-md mx-auto">
-            <button onclick="switchTab('feed')" id="nav-feed" class="tab-btn active flex flex-col items-center justify-center w-16 h-full text-slate-400 transition-colors">
-                <span class="material-symbols-outlined icon-fill text-[26px] mb-0.5">home</span>
-                <span class="text-[10px] font-bold">ראשי</span>
-            </button>
-            <button onclick="switchTab('experts')" id="nav-experts" class="tab-btn flex flex-col items-center justify-center w-16 h-full text-slate-400 transition-colors">
-                <span class="material-symbols-outlined icon-fill text-[26px] mb-0.5">group</span>
-                <span class="text-[10px] font-bold">מומחים</span>
-            </button>
-            <button onclick="switchTab('profile')" id="nav-profile" class="tab-btn flex flex-col items-center justify-center w-16 h-full text-slate-400 transition-colors">
-                <span class="material-symbols-outlined icon-fill text-[26px] mb-0.5">person</span>
-                <span class="text-[10px] font-bold">האזור שלי</span>
-            </button>
         </div>
     </nav>
 
-    <div id="modal-login" class="fixed inset-0 bg-white z-50 hidden flex flex-col justify-center px-6 pb-20">
-        <div class="w-16 h-16 rounded-3xl bg-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-indigo-200 mb-6">M</div>
-        <h2 class="text-3xl font-extrabold text-slate-800 mb-2">ברוכים הבאים<br>למאסטרים של טוביהו!</h2>
-        <p class="text-slate-500 mb-8 font-medium">קהילת העזרה והשיתוף של בית הספר.</p>
-        
-        <form id="form-login" class="space-y-4">
-            <div>
-                <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">איך קוראים לך?</label>
-                <input type="text" id="login-name" required placeholder="שם פרטי ומשפחה" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition">
+    <!-- Mobile Drawer -->
+    <div class="fixed inset-0 z-[100] hidden" id="mobile-menu-overlay">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="toggleMobileMenu(false)"></div>
+        <div class="mobile-menu-drawer absolute top-0 right-0 bottom-0 w-72 bg-white shadow-2xl flex flex-col" id="mobile-menu-drawer">
+            <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <span class="font-black text-indigo-950 text-xl">תפריט</span>
+                <button onclick="toggleMobileMenu(false)"><span class="material-symbols-outlined text-3xl">close</span></button>
             </div>
-            <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition mt-2">
-                כניסה לקהילה
-            </button>
-        </form>
+            <div class="p-4 flex flex-col gap-2">
+                <button class="flex items-center gap-4 p-5 rounded-2xl hover:bg-indigo-50 text-slate-600 font-black" onclick="switchTab('home');toggleMobileMenu(false)"><span class="material-symbols-outlined">home</span>דף הבית</button>
+                <button class="flex items-center gap-4 p-5 rounded-2xl hover:bg-indigo-50 text-slate-600 font-black" onclick="switchTab('board');toggleMobileMenu(false)"><span class="material-symbols-outlined">dashboard</span>לוח בקשות</button>
+                <button class="flex items-center gap-4 p-5 rounded-2xl hover:bg-slate-50 text-emerald-600 font-black" onclick="switchTab('experts');toggleMobileMenu(false)"><span class="material-symbols-outlined">verified</span>לוח מומחים</button>
+                <button class="flex items-center gap-4 p-5 rounded-2xl hover:bg-slate-50 text-slate-600 font-black" onclick="switchTab('request');toggleMobileMenu(false)"><span class="material-symbols-outlined">add_circle</span>פרסום חדש</button>
+                <button class="hidden flex items-center gap-4 p-5 rounded-2xl hover:bg-slate-50 text-red-600 font-black" id="mobile-admin-btn" onclick="switchTab('admin');toggleMobileMenu(false)"><span class="material-symbols-outlined">admin_panel_settings</span>פאנל ניהול</button>
+            </div>
+        </div>
     </div>
 
-    <div id="modal-post" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-end sm:items-center justify-center sm:p-4 backdrop-blur-sm transition-opacity">
-        <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md overflow-hidden transform transition-transform translate-y-0 shadow-2xl">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                <h3 class="text-lg font-extrabold text-slate-800">בקשת עזרה חדשה</h3>
-                <button onclick="closeModal('modal-post')" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200">
-                    <span class="material-symbols-outlined text-sm">close</span>
+    <main class="full-screen-container py-6 md:py-10 flex-1">
+
+        <!-- HOME -->
+        <div class="view-content space-y-12 animate-pop hidden" id="view-home">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-6xl font-black text-indigo-950 mb-4 tracking-tight leading-none">ברוכים הבאים</h2>
+                <p class="text-slate-500 text-lg md:text-2xl font-medium max-w-2xl mx-auto">בחר פעולה כדי להתחיל להשפיע על הקהילה שלנו</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 max-w-6xl mx-auto">
+                <button onclick="switchTab('board')" class="flex flex-col items-center justify-center p-8 bg-white rounded-[3rem] shadow-xl border-b-8 border-indigo-600 hover:-translate-y-2 transition active:scale-95 group">
+                    <div class="w-16 h-16 md:w-24 md:h-24 bg-indigo-50 text-indigo-600 rounded-3xl flex items-center justify-center mb-4 group-hover:scale-110 transition"><span class="material-symbols-outlined text-4xl md:text-6xl">dashboard</span></div>
+                    <span class="text-lg md:text-2xl font-black text-indigo-950">לוח בקשות</span>
+                </button>
+                <button onclick="switchTab('experts')" class="flex flex-col items-center justify-center p-8 bg-white rounded-[3rem] shadow-xl border-b-8 border-emerald-500 hover:-translate-y-2 transition active:scale-95 group">
+                    <div class="w-16 h-16 md:w-24 md:h-24 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center mb-4 group-hover:scale-110 transition"><span class="material-symbols-outlined text-4xl md:text-6xl">verified</span></div>
+                    <span class="text-lg md:text-2xl font-black text-indigo-950">לוח מומחים</span>
+                </button>
+                <button onclick="switchTab('request')" class="flex flex-col items-center justify-center p-8 bg-white rounded-[3rem] shadow-xl border-b-8 border-indigo-400 hover:-translate-y-2 transition active:scale-95 group">
+                    <div class="w-16 h-16 md:w-24 md:h-24 bg-indigo-100 text-indigo-400 rounded-3xl flex items-center justify-center mb-4 group-hover:scale-110 transition"><span class="material-symbols-outlined text-4xl md:text-6xl">add_circle</span></div>
+                    <span class="text-lg md:text-2xl font-black text-indigo-950">פרסום חדש</span>
+                </button>
+                <button onclick="switchTab('profile')" class="flex flex-col items-center justify-center p-8 bg-white rounded-[3rem] shadow-xl border-b-8 border-orange-400 hover:-translate-y-2 transition active:scale-95 group">
+                    <div class="w-16 h-16 md:w-24 md:h-24 bg-orange-50 text-orange-400 rounded-3xl flex items-center justify-center mb-4 group-hover:scale-110 transition"><span class="material-symbols-outlined text-4xl md:text-6xl">account_circle</span></div>
+                    <span class="text-lg md:text-2xl font-black text-indigo-950">הפרופיל שלי</span>
+                </button>
+                <button onclick="switchTab('admin')" id="home-admin-btn" class="hidden flex-col items-center justify-center p-8 bg-white rounded-[3rem] shadow-xl border-b-8 border-red-500 hover:-translate-y-2 transition active:scale-95 group">
+                    <div class="w-16 h-16 md:w-24 md:h-24 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mb-4 group-hover:scale-110 transition"><span class="material-symbols-outlined text-4xl md:text-6xl">admin_panel_settings</span></div>
+                    <span class="text-lg md:text-2xl font-black text-indigo-950">פאנל ניהול</span>
                 </button>
             </div>
-            <form id="form-post" class="p-6 space-y-4">
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">מה צריכים?</label>
-                    <input type="text" id="post-title" required placeholder="לדוגמה: עזרה במתמטיקה מכינה ל-5 יח׳" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:border-indigo-500 focus:bg-white transition">
+        </div>
+
+        <!-- BOARD -->
+        <div class="view-content space-y-10 animate-pop hidden" id="view-board">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div class="text-right">
+                    <h2 class="text-3xl md:text-5xl font-black text-slate-900 leading-none">מי צריך עזרה?</h2>
+                    <p class="text-slate-500 text-base md:text-xl italic mt-3 font-medium">בקשות פתוחות של חברי הקהילה</p>
                 </div>
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">פירוט (אופציונלי)</label>
-                    <textarea id="post-desc" placeholder="באיזה נושא בדיוק? מתי נוח לכם?" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:border-indigo-500 focus:bg-white transition h-24 resize-none"></textarea>
+                <select class="w-full md:w-80 bg-white border-2 border-slate-100 rounded-3xl px-6 py-4 font-black text-base shadow-sm focus:border-indigo-500 outline-none" id="board-filter" onchange="renderBoard()">
+                    <option value="all">כל התחומים</option>
+                    <option value="לימודי">לימודי</option>
+                    <option value="חברתי">חברתי</option>
+                    <option value="טכני/לוגיסטי">טכני/לוגיסטי</option>
+                </select>
+            </div>
+            <!-- 3 מודעות לדוגמא -->
+            <div class="bg-amber-50 border border-amber-200 rounded-3xl px-8 py-4 flex items-center gap-3 text-amber-700 font-bold text-sm">
+                <span class="material-symbols-outlined text-xl">info</span>
+                מודעות לדוגמא — כך ייראה הלוח כשמשתמשים יפרסמו בקשות
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-10">
+                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 opacity-55 flex flex-col justify-between gap-5 pointer-events-none select-none">
+                    <div><div class="flex justify-between mb-4"><span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">לימודי</span><span class="text-[10px] text-slate-300 font-black italic">דוגמא</span></div>
+                    <h3 class="text-xl font-black text-slate-900 mb-2">עזרה בהכנה לבגרות פיזיקה</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-5">מתקשה בנושא חשמל ומגנטיות. מחפש מישהו שיעבור איתי על הנוסחאות לפני הבגרות.</p>
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl"><div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-black">ד</div><div><p class="font-black text-slate-800 text-sm">דנה מזרחי</p><p class="text-[10px] text-slate-400 font-bold">תלמיד • יא' 4</p></div></div></div>
+                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm">רוצה לעזור</div>
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-indigo-200 active:scale-95 transition">
-                    פרסם בלוח
+                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 opacity-55 flex flex-col justify-between gap-5 pointer-events-none select-none">
+                    <div><div class="flex justify-between mb-4"><span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">טכני/לוגיסטי</span><span class="text-[10px] text-slate-300 font-black italic">דוגמא</span></div>
+                    <h3 class="text-xl font-black text-slate-900 mb-2">עזרה בהקמת אתר לפרויקט גמר</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-5">צריך עזרה בבניית דף נחיתה פשוט לפרויקט הגמר שלי. לא מכיר HTML בכלל.</p>
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl"><div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-black">י</div><div><p class="font-black text-slate-800 text-sm">יובל אברהם</p><p class="text-[10px] text-slate-400 font-bold">תלמיד • יב' 2</p></div></div></div>
+                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm">רוצה לעזור</div>
+                </div>
+                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 opacity-55 flex flex-col justify-between gap-5 pointer-events-none select-none">
+                    <div><div class="flex justify-between mb-4"><span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">חברתי</span><span class="text-[10px] text-slate-300 font-black italic">דוגמא</span></div>
+                    <h3 class="text-xl font-black text-slate-900 mb-2">חיפוש חברותא ללימוד משותף</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-5">מחפשת מישהי לקבוצת לימוד אחה"צ. יש לי מקום שקט בבית עם כל ספרי הלימוד.</p>
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl"><div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-black">מ</div><div><p class="font-black text-slate-800 text-sm">מיכל גולן</p><p class="text-[10px] text-slate-400 font-bold">תלמיד • י' 1</p></div></div></div>
+                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm">רוצה לעזור</div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-10" id="board-grid">
+                <div class="col-span-full py-24 text-center opacity-30 font-black text-2xl">טוען...</div>
+            </div>
+        </div>
+
+        <!-- EXPERTS -->
+        <div class="view-content space-y-10 animate-pop hidden" id="view-experts">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div class="text-right">
+                    <h2 class="text-3xl md:text-5xl font-black text-slate-900 leading-none">נבחרת המומחים</h2>
+                    <p class="text-slate-500 text-base md:text-xl italic mt-3 font-medium">חברים המציעים את הידע שלהם — לחץ על מודעה לבקשת עזרה</p>
+                </div>
+                <button onclick="openAddExpertModal()" class="shrink-0 bg-emerald-600 text-white font-black px-8 py-5 rounded-3xl shadow-xl hover:bg-emerald-700 active:scale-95 transition flex items-center gap-3 text-lg">
+                    <span class="material-symbols-outlined text-2xl">add_circle</span>
+                    הוסף את המומחיות שלך
                 </button>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-volunteer" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl">
-            <div class="bg-gradient-to-br from-teal-400 to-emerald-500 p-6 text-white text-center">
-                <span class="material-symbols-outlined text-4xl mb-2 opacity-90">handshake</span>
-                <h3 class="text-xl font-extrabold">איזה אלופים!</h3>
-                <p class="text-teal-50 text-sm font-medium mt-1">מלאו פרטים והמנהלת תקשר ביניכם.</p>
             </div>
-            <form id="form-volunteer" class="p-6 space-y-4">
-                <input type="hidden" id="vol-post-id">
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">כיתה</label>
-                        <input type="text" id="vol-grade" required placeholder="לדוג': י'2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-teal-500 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">טלפון</label>
-                        <input type="tel" id="vol-phone" required placeholder="05X..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-teal-500 transition text-left" dir="ltr">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">הודעה (אופציונלי)</label>
-                    <input type="text" id="vol-note" placeholder="מתי נוח לכם לעזור?" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-teal-500 transition">
-                </div>
-                
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="closeModal('modal-volunteer')" class="flex-1 py-3 text-slate-600 font-bold bg-slate-100 rounded-xl hover:bg-slate-200 transition">ביטול</button>
-                    <button type="submit" class="flex-[2] py-3 text-white font-bold bg-teal-500 rounded-xl shadow-lg shadow-teal-200 active:scale-95 transition">שלח פנייה למנהלת</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-add-expert" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all">
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-5 text-center">
-                <h3 class="text-xl font-bold text-white">פרסום מומחיות חדשה</h3>
-                <p class="text-indigo-100 text-sm mt-1">יודעים משהו טוב? שתפו את הקהילה!</p>
+            <!-- 3 מודעות לדוגמא (לא לחיצות) -->
+            <div class="bg-amber-50 border border-amber-200 rounded-3xl px-8 py-4 flex items-center gap-3 text-amber-700 font-bold text-sm">
+                <span class="material-symbols-outlined text-xl">info</span>
+                מודעות לדוגמא — כך ייראה הלוח כשמשתמשים יפרסמו מומחיות אמיתית
             </div>
-            <form id="form-expert" class="p-5 space-y-4">
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">במה אני מומחה/ית?</label>
-                    <input type="text" id="exp-title" required placeholder="לדוגמה: עיצוב מצגות בקאנבה" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-10">
+                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 border-t-8 border-t-emerald-400 opacity-60 flex flex-col gap-4 pointer-events-none select-none">
+                    <div class="flex justify-between items-center"><span class="bg-emerald-50 text-emerald-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">טכני/לוגיסטי</span><span class="text-[10px] font-black text-slate-300 italic">דוגמא</span></div>
+                    <h3 class="text-xl font-black text-slate-900">מצגות קנבה ועיצוב גרפי</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">יכול לעזור בבניית מצגות מרשימות בקנבה, עיצוב לוגואים, פוסטים לרשת וכל דבר ויזואלי.</p>
+                    <div class="flex items-center gap-3 mt-2"><div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black text-lg">נ</div><div><p class="font-black text-slate-800 text-sm">נועם כהן</p><p class="text-[10px] text-slate-400 font-bold">יא' 2</p></div></div>
+                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm mt-2">בקש עזרה מהמומחה</div>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">קצת פירוט על העזרה</label>
-                    <textarea id="exp-desc" required placeholder="אשמח לעזור בעיצוב, לעבור על מצגות וכו'..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 h-20 resize-none"></textarea>
+                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 border-t-8 border-t-emerald-400 opacity-60 flex flex-col gap-4 pointer-events-none select-none">
+                    <div class="flex justify-between items-center"><span class="bg-emerald-50 text-emerald-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">לימודי</span><span class="text-[10px] font-black text-slate-300 italic">דוגמא</span></div>
+                    <h3 class="text-xl font-black text-slate-900">מתמטיקה — אינטגרלים וגבולות</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">מסביר בסבלנות חשבון אינפיניטסימלי ברמת יב', כולל הכנה לבגרות 5 יחידות.</p>
+                    <div class="flex items-center gap-3 mt-2"><div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black text-lg">ש</div><div><p class="font-black text-slate-800 text-sm">שירה לוי</p><p class="text-[10px] text-slate-400 font-bold">יב' 1</p></div></div>
+                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm mt-2">בקש עזרה מהמומחה</div>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">כיתה/תפקיד</label>
-                        <input type="text" id="exp-grade" required placeholder="לדוגמה: י'2 או מורה" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">שעות פניות</label>
-                        <input type="text" id="exp-hours" required placeholder="16:00-19:00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
+                <div class="p-8 rounded-[3rem] bg-white border border-slate-100 border-t-8 border-t-emerald-400 opacity-60 flex flex-col gap-4 pointer-events-none select-none">
+                    <div class="flex justify-between items-center"><span class="bg-emerald-50 text-emerald-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase">טכני/לוגיסטי</span><span class="text-[10px] font-black text-slate-300 italic">דוגמא</span></div>
+                    <h3 class="text-xl font-black text-slate-900">Excel ו־Google Sheets מתקדם</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">נוסחאות, טבלאות ציר, גרפים ואוטומציה בגיליונות אלקטרוניים — לתלמידים ולמורים.</p>
+                    <div class="flex items-center gap-3 mt-2"><div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black text-lg">א</div><div><p class="font-black text-slate-800 text-sm">אורי ברק</p><p class="text-[10px] text-slate-400 font-bold">יב' 3</p></div></div>
+                    <div class="bg-slate-100 text-slate-400 font-black py-4 rounded-2xl text-center text-sm mt-2">בקש עזרה מהמומחה</div>
                 </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="closeModal('modal-add-expert')" class="flex-1 py-3 text-slate-600 font-semibold bg-slate-100 rounded-xl hover:bg-slate-200">ביטול</button>
-                    <button type="submit" class="flex-[2] py-3 text-white font-semibold bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-md">פרסם בלוח</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-contact-expert" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl">
-            <div class="bg-gradient-to-r from-teal-400 to-emerald-500 p-5 text-center">
-                <h3 class="text-xl font-bold text-white">בקשת עזרה מהמומחה</h3>
             </div>
-            <form id="form-contact-expert" class="p-5 space-y-4">
-                <input type="hidden" id="contact-expert-id">
-                <p class="text-sm text-slate-600 text-center font-medium">הפנייה תועבר להנהלת המיזם שתקשר ביניכם לבין המומחה.</p>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">טלפון שלכם (ווטסאפ)</label>
-                    <input type="tel" id="contact-expert-phone" required placeholder="05X-XXXXXXX" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-teal-500" dir="ltr">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">הודעה למומחה (אופציונלי)</label>
-                    <textarea id="contact-expert-note" placeholder="היי, אני צריך/ה עזרה עם..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-teal-500 h-20 resize-none"></textarea>
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="closeModal('modal-contact-expert')" class="flex-1 py-3 text-slate-600 font-semibold bg-slate-100 rounded-xl">ביטול</button>
-                    <button type="submit" class="flex-[2] py-3 text-white font-semibold bg-teal-500 rounded-xl shadow-md">שלח פנייה</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-logout" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-xs text-center">
-            <h3 class="font-bold text-lg mb-4">בטוח שרוצים להתנתק?</h3>
-            <div class="flex gap-3">
-                <button onclick="closeModal('modal-logout')" class="flex-1 py-2.5 bg-slate-100 text-slate-700 font-semibold rounded-xl">ביטול</button>
-                <button onclick="logout()" class="flex-1 py-2.5 bg-red-500 text-white font-semibold rounded-xl">התנתק</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-10" id="experts-grid">
+                <div class="col-span-full py-24 text-center opacity-30 font-black text-2xl">טוען...</div>
             </div>
         </div>
-    </div>
 
-    <script>
-        // ═══════════════════════════════════════════════
-        //  FIREBASE SETUP (Demo Project)
-        // ═══════════════════════════════════════════════
-        const firebaseConfig = {
-            databaseURL: "https://demo-tuviya-default-rtdb.europe-west1.firebasedatabase.app"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        
-        // References
-        const postsRef = db.ref('posts');
-        const volunteersRef = db.ref('volunteers');
-        const expertsRef = db.ref('experts');
-        const expertRequestsRef = db.ref('expert_requests');
-
-        // ═══════════════════════════════════════════════
-        //  STATE & AUTH
-        // ═══════════════════════════════════════════════
-        let currentUser = JSON.parse(localStorage.getItem('tuviyaUser'));
-        let currentPosts = {};
-        
-        // Helper: Escape HTML to prevent XSS
-        function escapeHtml(str) {
-            if(!str) return '';
-            return str.replace(/[&<>'"]/g, tag => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-            }[tag] || tag));
-        }
-
-        function checkAuth() {
-            if (!currentUser) {
-                document.getElementById('modal-login').classList.remove('hidden');
-                document.getElementById('main-content').classList.add('hidden');
-            } else {
-                document.getElementById('modal-login').classList.add('hidden');
-                document.getElementById('main-content').classList.remove('hidden');
-                document.getElementById('prof-name').textContent = currentUser.name;
-            }
-        }
-
-        document.getElementById('form-login').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('login-name').value.trim();
-            if(name) {
-                currentUser = { id: 'usr_' + Date.now() + Math.floor(Math.random()*1000), name: name };
-                localStorage.setItem('tuviyaUser', JSON.stringify(currentUser));
-                checkAuth();
-                showToast('👋 ברוכים הבאים לקהילה!');
-            }
-        });
-
-        function logout() {
-            localStorage.removeItem('tuviyaUser');
-            currentUser = null;
-            closeModal('modal-logout');
-            checkAuth();
-            switchTab('feed');
-        }
-
-        // ═══════════════════════════════════════════════
-        //  NAVIGATION
-        // ═══════════════════════════════════════════════
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.getElementById('nav-' + tabId).classList.add('active');
-            window.scrollTo(0,0);
-        }
-
-        // ═══════════════════════════════════════════════
-        //  FEED LOGIC (בקשות עזרה)
-        // ═══════════════════════════════════════════════
-        postsRef.on('value', snap => {
-            currentPosts = snap.val() || {};
-            renderFeed();
-            renderMyPosts();
-        });
-
-        function renderFeed() {
-            const list = document.getElementById('feed-list');
-            list.innerHTML = '';
-            
-            const arr = Object.keys(currentPosts).map(k => ({id: k, ...currentPosts[k]})).sort((a,b) => b.time - a.time);
-            
-            if(arr.length === 0) {
-                list.innerHTML = '<div class="text-center text-slate-400 mt-10 text-sm font-medium">אין כרגע בקשות בלוח.<br>איזה כיף שכולם מסתדרים!</div>';
-                return;
-            }
-
-            arr.forEach(post => {
-                if (post.status === 'resolved') return; // Don't show resolved
-                
-                const isMine = currentUser && post.authorId === currentUser.id;
-                
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded-3xl p-5 shadow-sm border border-slate-100 relative transition-transform active:scale-[0.98]';
-                
-                let actionBtn = '';
-                if (!isMine) {
-                    actionBtn = `<button onclick="openVolunteer('${post.id}')" class="mt-4 w-full bg-teal-50 hover:bg-teal-100 text-teal-700 font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
-                        <span class="material-symbols-outlined text-lg">front_hand</span> אני יכול/ה לעזור!
-                    </button>`;
-                } else {
-                    actionBtn = `<div class="mt-4 text-center text-xs font-bold text-slate-400 bg-slate-50 py-2 rounded-xl">זו הבקשה שלך</div>`;
-                }
-
-                card.innerHTML = `
-                    <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold flex-shrink-0">
-                            ${escapeHtml(post.authorName.charAt(0))}
+        <!-- POST FORM -->
+        <div class="view-content w-full animate-pop hidden" id="view-request">
+            <div class="bg-white rounded-[3rem] md:rounded-[4rem] p-6 md:p-16 shadow-2xl border border-slate-50 mx-auto max-w-4xl">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-8 tracking-tight">פרסום חדש</h2>
+                    <div class="inline-flex bg-slate-100 p-1.5 rounded-full w-full max-w-md shadow-inner">
+                        <button class="flex-1 py-4 rounded-[1.5rem] font-black text-sm transition-all bg-white text-indigo-600 shadow-md" id="btn-mode-req" onclick="setFormMode('request')">צריך עזרה</button>
+                        <button class="flex-1 py-4 rounded-[1.5rem] font-black text-sm transition-all text-slate-400" id="btn-mode-exp" onclick="setFormMode('expert')">מציע מומחיות</button>
+                    </div>
+                </div>
+                <form class="space-y-6 md:space-y-10 text-right" id="post-form">
+                    <input id="form-mode" type="hidden" value="request">
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-400 mr-2 uppercase tracking-widest">שם מלא</label>
+                        <input class="w-full px-6 py-5 rounded-3xl border-2 border-slate-100 bg-slate-50 outline-none font-bold text-lg cursor-not-allowed text-slate-500" id="post-name" type="text" readonly>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+                        <div class="space-y-2">
+                            <label class="text-xs font-black text-slate-400 mr-2 uppercase tracking-widest">תפקיד</label>
+                            <select class="w-full px-6 py-5 rounded-3xl border-2 border-slate-100 focus:border-indigo-500 outline-none font-bold text-lg" id="post-role" onchange="toggleGradeVis()">
+                                <option value="תלמיד">תלמיד/ה</option>
+                                <option value="מורה">מורה</option>
+                                <option value="איש מנהלה">איש מנהלה</option>
+                            </select>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-extrabold text-slate-800 text-[15px] leading-tight mb-0.5">${escapeHtml(post.title)}</h4>
-                            <p class="text-xs text-slate-400 font-medium">${escapeHtml(post.authorName)} • ${timeAgo(post.time)}</p>
+                        <div class="space-y-2" id="post-grade-box">
+                            <label class="text-xs font-black text-slate-400 mr-2 uppercase tracking-widest">כיתה</label>
+                            <input class="w-full px-6 py-5 rounded-3xl border-2 border-slate-100 focus:border-indigo-500 outline-none font-bold text-lg" id="post-grade" placeholder="יא' 3" type="text">
                         </div>
                     </div>
-                    ${post.desc ? `<p class="mt-3 text-sm text-slate-600 bg-slate-50 p-3 rounded-2xl">${escapeHtml(post.desc)}</p>` : ''}
-                    ${actionBtn}
-                `;
-                list.appendChild(card);
-            });
-        }
-
-        function renderMyPosts() {
-            if(!currentUser) return;
-            const list = document.getElementById('my-posts-list');
-            list.innerHTML = '';
-            
-            const myPosts = Object.keys(currentPosts)
-                .map(k => ({id: k, ...currentPosts[k]}))
-                .filter(p => p.authorId === currentUser.id)
-                .sort((a,b) => b.time - a.time);
-
-            if(myPosts.length === 0) {
-                list.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">לא פרסמת בקשות עדיין.</div>';
-                return;
-            }
-
-            myPosts.forEach(post => {
-                const el = document.createElement('div');
-                el.className = 'bg-slate-50 border border-slate-100 p-4 rounded-2xl flex justify-between items-center';
-                el.innerHTML = `
-                    <div class="min-w-0 flex-1 ml-3">
-                        <div class="font-bold text-slate-700 text-sm truncate">${escapeHtml(post.title)}</div>
-                        <div class="text-xs text-slate-400 mt-0.5">${timeAgo(post.time)}</div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-400 mr-2 uppercase tracking-widest">תחום</label>
+                        <select class="w-full px-6 py-5 rounded-3xl border-2 border-slate-100 focus:border-indigo-500 outline-none font-bold bg-white text-lg appearance-none" id="post-type">
+                            <option value="לימודי">לימודי</option>
+                            <option value="חברתי">חברתי</option>
+                            <option value="טכני/לוגיסטי">טכני/לוגיסטי</option>
+                        </select>
                     </div>
-                    <button onclick="deletePost('${post.id}')" class="w-8 h-8 rounded-full bg-white text-red-400 shadow-sm flex items-center justify-center hover:bg-red-50 flex-shrink-0">
-                        <span class="material-symbols-outlined text-sm">delete</span>
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-400 mr-2 uppercase tracking-widest">כותרת הפוסט</label>
+                        <input class="w-full px-6 py-5 rounded-3xl border-2 border-slate-100 focus:border-indigo-500 outline-none font-bold text-lg" id="post-title" placeholder="נושא קצר וברור" required type="text">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-400 mr-2 uppercase tracking-widest">תיאור מפורט</label>
+                        <textarea class="w-full px-8 py-6 rounded-3xl border-2 border-slate-100 focus:border-indigo-500 outline-none font-medium text-lg leading-relaxed" id="post-desc" placeholder="מה בדיוק הצורך? איך אפשר לעזור?" required rows="4"></textarea>
+                    </div>
+                    <button class="w-full bg-indigo-600 text-white font-black py-6 rounded-[2.5rem] shadow-2xl hover:bg-indigo-700 active:scale-95 transition-all text-2xl flex items-center justify-center" id="publish-btn" type="submit">
+                        פרסם עכשיו
                     </button>
-                `;
-                list.appendChild(el);
-            });
-        }
+                </form>
+            </div>
+        </div>
 
-        // Create Post
-        document.getElementById('form-post').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            btn.disabled = true; btn.textContent = 'מפרסם...';
-            
-            const title = document.getElementById('post-title').value.trim();
-            const desc = document.getElementById('post-desc').value.trim();
-            
-            try {
-                await postsRef.push({ authorId: currentUser.id, authorName: currentUser.name, title, desc, time: Date.now(), status: 'open' });
-                closeModal('modal-post');
-                e.target.reset();
-                showToast('🚀 הבקשה פורסמה בלוח!');
-                window.scrollTo(0,0);
-            } catch(err) { showToast('❌ שגיאה בפרסום'); }
-            
-            btn.disabled = false; btn.textContent = 'פרסם בלוח';
-        });
-
-        // Delete Post
-        window.deletePost = async (id) => {
-            if(confirm('למחוק את הבקשה?')) {
-                await postsRef.child(id).remove();
-                showToast('🗑️ הבקשה נמחקה');
-            }
-        };
-
-        // ═══════════════════════════════════════════════
-        //  VOLUNTEER LOGIC (להציע עזרה)
-        // ═══════════════════════════════════════════════
-        function openVolunteer(postId) {
-            document.getElementById('vol-post-id').value = postId;
-            document.getElementById('modal-volunteer').classList.remove('hidden');
-        }
-
-        document.getElementById('form-volunteer').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            btn.disabled = true; btn.textContent = 'שולח...';
-            
-            const postId = document.getElementById('vol-post-id').value;
-            const post = currentPosts[postId];
-            const grade = document.getElementById('vol-grade').value.trim();
-            const phone = document.getElementById('vol-phone').value.trim();
-            const note = document.getElementById('vol-note').value.trim();
-            
-            try {
-                await volunteersRef.push({ postId, postTitle: post.title, helperName: currentUser.name, helperEmail: currentUser.email, helperGrade: grade, helperPhone: phone, note, status: 'pending', time: Date.now() });
-                closeModal('modal-volunteer');
-                showToast('📬 ההצעה לעזרה נשלחה למנהלת!');
-                switchTab('profile');
-            } catch(err) { showToast('❌ שגיאה בשליחה — נסה שוב'); }
-            
-            btn.disabled = false; btn.textContent = 'שלח פנייה למנהלת';
-        });
-
-        // ═══════════════════════════════════════════════
-        //  EXPERTS LOGIC (לוח מומחים)
-        // ═══════════════════════════════════════════════
-        expertsRef.on('value', snap => {
-            renderExperts(snap.val());
-        });
-
-        function renderExperts(data) {
-            const list = document.getElementById('experts-list');
-            list.innerHTML = '';
-            
-            if (!data) {
-                list.innerHTML = '<div class="text-center text-slate-400 mt-10 text-sm font-medium">אין כרגע מומחים בלוח.<br>תהיו הראשונים לפרסם!</div>';
-                return;
-            }
-            
-            const experts = Object.entries(data).map(([id, val]) => ({id, ...val})).sort((a,b) => b.time - a.time);
-            
-            experts.forEach(exp => {
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded-3xl p-5 shadow-sm border border-slate-100 relative';
-                card.innerHTML = `
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center flex-shrink-0 shadow-inner">
-                            <span class="material-symbols-outlined text-indigo-500">workspace_premium</span>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-extrabold text-slate-800 text-lg mb-1">${escapeHtml(exp.title)}</h4>
-                            <p class="text-xs font-bold text-slate-400 mb-2">${escapeHtml(exp.authorName)} • ${escapeHtml(exp.grade)} • ${escapeHtml(exp.hours)}</p>
-                            <p class="text-slate-600 text-sm mb-4 leading-relaxed">${escapeHtml(exp.desc)}</p>
-                            
-                            ${(!currentUser || currentUser.id !== exp.authorId) ? `
-                                <button onclick="openContactExpertModal('${exp.id}')" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
-                                    <span class="material-symbols-outlined text-lg">handshake</span> עזרו לי בזה!
-                                </button>
-                            ` : `<div class="text-center text-xs font-bold text-slate-400 bg-slate-50 py-2 rounded-xl">זה הפרסום שלך</div>`}
+        <!-- PROFILE -->
+        <div class="view-content space-y-12 animate-pop hidden" id="view-profile">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
+                <div class="lg:col-span-1 space-y-10">
+                    <div class="bg-white rounded-[3.5rem] p-12 border border-slate-100 shadow-sm text-center relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-32 bg-indigo-50"></div>
+                        <div class="relative pt-4 flex flex-col items-center">
+                            <div class="w-32 h-32 rounded-full bg-indigo-600 text-white border-4 border-white shadow-2xl flex items-center justify-center text-5xl font-black mb-6" id="prof-initials">?</div>
+                            <h2 class="text-3xl font-black text-slate-900 mb-2" id="prof-name">משתמש</h2>
+                            <p class="text-sm text-slate-400 font-bold italic mb-10" id="prof-email">-</p>
+                            <div class="grid grid-cols-2 gap-4 w-full text-right">
+                                <div class="bg-indigo-50 p-6 rounded-[2.5rem] border border-indigo-100">
+                                    <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">נקודות</p>
+                                    <p class="text-4xl font-black text-indigo-700 leading-none" id="prof-points">0</p>
+                                </div>
+                                <div class="bg-emerald-50 p-6 rounded-[2.5rem] border border-emerald-100">
+                                    <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">סיועים</p>
+                                    <p class="text-4xl font-black text-emerald-700 leading-none" id="prof-helps">0</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                `;
-                list.appendChild(card);
-            });
+                    <div class="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl">
+                        <h3 class="font-black text-2xl mb-8 flex items-center gap-3 text-right">
+                            <span class="material-symbols-outlined text-amber-400 text-3xl">workspace_premium</span> מד מעורבות
+                        </h3>
+                        <div class="space-y-8 text-right">
+                            <div class="flex justify-between items-end text-sm font-bold">
+                                <span class="text-amber-400 text-lg" id="prof-rank">מתחיל/ה</span>
+                                <span class="text-slate-500" id="prof-meter-percent">0%</span>
+                            </div>
+                            <div class="h-5 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-l from-indigo-500 to-emerald-400 meter-fill" id="prof-meter-fill" style="width:0%"></div>
+                            </div>
+                            <p class="text-center text-xs text-slate-400 font-bold uppercase tracking-widest" id="prof-meter-text">עוד 200 נקודות לדרגת מאסטר</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-3">
+                    <div class="bg-white rounded-[3.5rem] shadow-sm border border-slate-100 overflow-hidden">
+                        <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50">
+                            <h3 class="text-2xl font-black text-slate-900">הפעילות שלי</h3>
+                            <span class="bg-indigo-100 text-indigo-600 px-5 py-2 rounded-full text-sm font-black" id="prof-act-count">0</span>
+                        </div>
+                        <div class="overflow-x-auto text-right">
+                            <table class="w-full text-right text-lg">
+                                <thead class="bg-white text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                                    <tr><th class="p-8">נושא</th><th class="p-8 text-center">סוג</th><th class="p-8 text-center">סטטוס</th></tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-50 font-bold text-slate-700" id="table-my-history">
+                                    <tr><td colspan="3" class="p-24 text-center text-slate-300 italic">אין פעילות רשומה.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN -->
+        <div class="view-content space-y-12 animate-pop hidden" id="view-admin">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-10">
+                <div class="text-right">
+                    <h2 class="text-4xl md:text-7xl font-black text-slate-900 leading-none">ניהול קהילה</h2>
+                    <p class="text-slate-500 font-medium text-xl md:text-2xl mt-4 italic">אישור חיבורים וניהול נתונים</p>
+                </div>
+                <div class="bg-white px-10 py-6 rounded-[3rem] border-2 border-red-100 shadow-xl flex items-center gap-8 admin-pulse">
+                    <span class="material-symbols-outlined text-red-500 text-6xl">notification_important</span>
+                    <span class="font-black text-red-600 text-5xl leading-none" id="admin-pending-badge">0</span>
+                </div>
+            </div>
+            <div class="space-y-12">
+                <h3 class="text-3xl md:text-4xl font-black text-indigo-900 text-right underline underline-offset-8">בקשות הממתינות לאישור</h3>
+                <div class="grid grid-cols-1 gap-10" id="admin-matches-container"></div>
+                <div class="p-40 text-center text-slate-200 hidden" id="admin-empty">
+                    <span class="material-symbols-outlined text-[120px] opacity-10">task_alt</span>
+                    <p class="text-5xl font-black italic opacity-40 mt-6">הכל מטופל!</p>
+                </div>
+                <h3 class="text-3xl font-black text-slate-400 pt-16 border-t border-slate-200 text-right italic opacity-60">ארכיון בקשות שטופלו</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-32" id="admin-history-grid"></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- VOLUNTEER MODAL -->
+<div class="modal-overlay hidden" id="modal-volunteer">
+    <div class="modal-container animate-pop">
+        <div class="absolute top-0 right-0 left-0 h-4 bg-indigo-600 z-20"></div>
+        <button class="absolute top-8 left-8 text-slate-400 hover:text-slate-900 z-30" onclick="closeModal('modal-volunteer')">
+            <span class="material-symbols-outlined text-4xl">close</span>
+        </button>
+        <div class="modal-scroll-area text-right">
+            <div class="text-center mb-10">
+                <div class="w-24 h-24 bg-emerald-50 text-emerald-600 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-inner">
+                    <span class="material-symbols-outlined text-6xl">handshake</span>
+                </div>
+                <h3 class="text-4xl font-black text-slate-900 mb-4 tracking-tighter" id="v-modal-title">מתאים לי לעזור</h3>
+                <p class="text-slate-500 text-xl font-medium px-4 leading-relaxed">המנהלת תקשר ביניכם לאחר שתאשר את הפנייה.</p>
+            </div>
+            <form class="space-y-8 pb-10" id="volunteer-form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">השם שלך</label>
+                        <input class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-2 border-slate-100 font-black outline-none cursor-not-allowed text-slate-500" id="v-name" readonly type="text">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">כיתה</label>
+                        <input class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-indigo-500 outline-none font-black text-lg" id="v-grade" placeholder="יא' 2" required type="text">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">טלפון ליצירת קשר</label>
+                    <input class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-indigo-500 outline-none font-black text-lg" id="v-phone" placeholder="050-0000000" required type="tel">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">מתי נוח לך? ופרטים נוספים</label>
+                    <textarea class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-indigo-500 outline-none font-bold text-lg leading-relaxed" id="v-note" placeholder="למשל: פנוי בשלישי בצהריים..." required rows="4"></textarea>
+                </div>
+                <div class="pt-6">
+                    <button class="w-full bg-emerald-600 text-white font-black py-6 rounded-[2.5rem] shadow-2xl hover:bg-emerald-700 active:scale-95 transition-all text-2xl flex items-center justify-center" type="submit" id="volunteer-submit-btn">
+                        שלח פנייה למנהלת
+                    </button>
+                    <button class="w-full mt-4 text-slate-400 font-extrabold text-lg hover:text-slate-900 transition" onclick="closeModal('modal-volunteer')" type="button">ביטול וחזרה</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ADD EXPERT MODAL -->
+<div class="modal-overlay hidden" id="modal-add-expert">
+    <div class="modal-container animate-pop">
+        <div class="absolute top-0 right-0 left-0 h-4 bg-emerald-600 z-20"></div>
+        <button class="absolute top-8 left-8 text-slate-400 hover:text-slate-900 z-30" onclick="closeModal('modal-add-expert')">
+            <span class="material-symbols-outlined text-4xl">close</span>
+        </button>
+        <div class="modal-scroll-area text-right">
+            <div class="text-center mb-10">
+                <div class="w-24 h-24 bg-emerald-50 text-emerald-600 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 shadow-inner">
+                    <span class="material-symbols-outlined text-6xl">verified</span>
+                </div>
+                <h3 class="text-4xl font-black text-slate-900 mb-3 tracking-tighter">הוסף את המומחיות שלך</h3>
+                <p class="text-slate-500 text-lg font-medium px-4 leading-relaxed">שתף מה אתה טוב בו — ותלמידים אחרים יוכלו לפנות אליך</p>
+            </div>
+            <form class="space-y-8 pb-10" id="add-expert-form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">השם שלך</label>
+                        <input class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-2 border-slate-100 font-black outline-none cursor-not-allowed text-slate-500" id="exp-name" readonly type="text">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">כיתה / תפקיד</label>
+                        <input class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-black text-lg" id="exp-grade" placeholder="יא' 2 / מורה למתמטיקה" required type="text">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">תחום המומחיות</label>
+                    <select class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold text-lg" id="exp-type">
+                        <option value="לימודי">לימודי</option>
+                        <option value="חברתי">חברתי</option>
+                        <option value="טכני/לוגיסטי">טכני/לוגיסטי</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">כותרת — במה אתה מומחה?</label>
+                    <input class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-black text-lg" id="exp-title" placeholder="מצגות קנבה, מתמטיקה 5 יח', Excel..." required type="text">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">תיאור — איך תוכל לעזור?</label>
+                    <textarea class="w-full px-6 py-5 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold text-lg leading-relaxed" id="exp-desc" placeholder="תאר את הניסיון שלך ואיך תלמידים יכולים להיעזר בך..." required rows="4"></textarea>
+                </div>
+                <div class="pt-4">
+                    <button class="w-full bg-emerald-600 text-white font-black py-6 rounded-[2.5rem] shadow-2xl hover:bg-emerald-700 active:scale-95 transition-all text-2xl flex items-center justify-center" type="submit" id="add-expert-btn">
+                        פרסם את המומחיות שלי
+                    </button>
+                    <button class="w-full mt-4 text-slate-400 font-extrabold text-lg hover:text-slate-900 transition" onclick="closeModal('modal-add-expert')" type="button">ביטול וחזרה</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- LOGOUT MODAL -->
+<div class="modal-overlay hidden" id="modal-logout">
+    <div class="modal-container animate-pop" style="max-width:28rem;height:auto;">
+        <div class="p-12 text-center flex flex-col items-center">
+            <div class="w-24 h-24 bg-red-50 text-red-500 rounded-[2rem] flex items-center justify-center mb-8 shadow-inner">
+                <span class="material-symbols-outlined text-6xl">logout</span>
+            </div>
+            <h3 class="text-3xl font-black text-slate-900 mb-4">מתנתקים?</h3>
+            <p class="text-slate-500 font-medium mb-12 text-lg">האם אתם בטוחים שברצונכם לצאת?</p>
+            <div class="flex flex-col gap-4 w-full">
+                <button class="w-full bg-slate-950 text-white font-black py-5 rounded-3xl shadow-xl hover:bg-red-600 active:scale-95 transition-all text-xl" onclick="confirmLogout()">כן, התנתק</button>
+                <button class="w-full bg-slate-100 text-slate-500 font-bold py-5 rounded-3xl hover:bg-slate-200 transition-all text-lg" onclick="closeModal('modal-logout')">חזור חזרה</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  FIREBASE
+// ═══════════════════════════════════════════════
+const firebaseConfig = {
+    apiKey: "AIzaSyCKgcCNPbGjt0HKRKWYdR4LQFeBzvqixF8",
+    authDomain: "masterim-92c84.firebaseapp.com",
+    databaseURL: "https://masterim-92c84-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "masterim-92c84",
+    storageBucket: "masterim-92c84.firebasestorage.app",
+    messagingSenderId: "340433499517",
+    appId: "1:340433499517:web:42caed4f25574d1ffbc814"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+const ADMIN_EMAIL = 'netbok10@gmail.com';
+let currentUser   = null;
+let activePostId  = null;
+let cachedPosts      = {};
+let cachedVolunteers = {};
+let cachedHistory    = {};
+
+// ═══════════════════════════════════════════════
+//  REAL-TIME LISTENERS — data syncs across all browsers
+// ═══════════════════════════════════════════════
+function startListeners() {
+    db.ref('posts').on('value', snap => {
+        cachedPosts = snap.val() || {};
+        refreshCurrentView();
+        updateStats();
+    });
+    db.ref('volunteers').on('value', snap => {
+        cachedVolunteers = snap.val() || {};
+        refreshCurrentView();
+        // Notification dot for admin
+        if (currentUser && currentUser.role === 'admin') {
+            const hasPending = Object.values(cachedVolunteers).some(v => v.status === 'pending');
+            document.getElementById('admin-notif-dot').classList.toggle('hidden', !hasPending);
         }
+    });
+    db.ref('history').on('value', snap => {
+        cachedHistory = snap.val() || {};
+        updateStats();
+        refreshCurrentView();
+    });
+}
 
-        // הוספת מומחיות
-        document.getElementById('form-expert').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            btn.disabled = true; btn.textContent = 'מפרסם...';
-            
-            try {
-                await expertsRef.push({
-                    authorId: currentUser.id,
-                    authorName: currentUser.name,
-                    title: document.getElementById('exp-title').value.trim(),
-                    desc: document.getElementById('exp-desc').value.trim(),
-                    grade: document.getElementById('exp-grade').value.trim(),
-                    hours: document.getElementById('exp-hours').value.trim(),
-                    time: Date.now()
-                });
-                closeModal('modal-add-expert');
-                e.target.reset();
-                showToast('✅ המומחיות שלך פורסמה בהצלחה!');
-            } catch(err) {
-                showToast('❌ שגיאה בפרסום');
-                console.error(err);
-            }
-            btn.disabled = false; btn.textContent = 'פרסם בלוח';
+function refreshCurrentView() {
+    const active = document.querySelector('.view-content:not(.hidden)');
+    if (!active) return;
+    const id = active.id.replace('view-', '');
+    if (id === 'board')   renderBoard();
+    if (id === 'experts') renderExperts();
+    if (id === 'profile') renderProfile();
+    if (id === 'admin')   renderAdmin();
+}
+
+// ═══════════════════════════════════════════════
+//  SECURITY HELPERS
+// ═══════════════════════════════════════════════
+function sanitize(str, maxLen = 500) {
+    if (typeof str !== 'string') return '';
+    return str.trim().slice(0, maxLen);
+}
+function escHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+function isRateLimited(key, limitMs) {
+    const last = parseInt(sessionStorage.getItem(key) || '0');
+    if (Date.now() - last < limitMs) return true;
+    sessionStorage.setItem(key, Date.now());
+    return false;
+}
+
+// ═══════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const emailRaw = document.getElementById('login-email').value.toLowerCase().trim();
+    if (!validateEmail(emailRaw)) { showToast('❌ כתובת אימייל לא תקינה'); return; }
+
+    const btn = document.getElementById('login-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> מתחבר...';
+
+    await new Promise(r => setTimeout(r, 500));
+
+    const namePart = emailRaw.split('@')[0];
+    const displayName = namePart.charAt(0).toUpperCase() + namePart.slice(1).replace(/[._]/g,' ');
+    currentUser = { email: emailRaw, name: displayName, role: emailRaw === ADMIN_EMAIL ? 'admin' : 'user' };
+    initApp();
+});
+
+function initApp() {
+    document.getElementById('view-login').classList.add('hidden');
+    document.getElementById('main-app').classList.remove('hidden');
+    document.getElementById('nav-user-name').textContent  = currentUser.name;
+    document.getElementById('prof-initials').textContent  = currentUser.name[0].toUpperCase();
+    document.getElementById('prof-name').textContent      = currentUser.name;
+    document.getElementById('prof-email').textContent     = currentUser.email;
+    document.getElementById('post-name').value            = currentUser.name;
+    document.getElementById('v-name').value               = currentUser.name;
+    document.getElementById('exp-name').value             = currentUser.name;
+
+    if (currentUser.role === 'admin') {
+        document.getElementById('link-admin').classList.remove('hidden');
+        document.getElementById('mobile-admin-btn').classList.remove('hidden');
+        const hab = document.getElementById('home-admin-btn');
+        hab.classList.remove('hidden');
+        hab.style.display = 'flex';
+    }
+    startListeners();
+    switchTab('home');
+}
+
+function triggerLogout() { document.getElementById('modal-logout').classList.remove('hidden'); }
+function confirmLogout()  { location.reload(); }
+
+// ═══════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════
+function switchTab(tabId) {
+    document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
+    document.querySelectorAll('.nav-item-link').forEach(b => b.classList.remove('nav-link-active'));
+    const view = document.getElementById('view-' + tabId);
+    if (view) view.classList.remove('hidden');
+    const link = document.getElementById('link-' + tabId);
+    if (link) link.classList.add('nav-link-active');
+    if (tabId === 'board')   renderBoard();
+    if (tabId === 'experts') renderExperts();
+    if (tabId === 'profile') renderProfile();
+    if (tabId === 'admin')   { renderAdmin(); document.getElementById('admin-notif-dot').classList.add('hidden'); }
+    window.scrollTo(0,0);
+}
+
+function toggleMobileMenu(show) {
+    const overlay = document.getElementById('mobile-menu-overlay');
+    const drawer  = document.getElementById('mobile-menu-drawer');
+    if (show) { overlay.classList.remove('hidden'); setTimeout(() => drawer.classList.add('active'),10); }
+    else       { drawer.classList.remove('active'); setTimeout(() => overlay.classList.add('hidden'),300); }
+}
+
+// ═══════════════════════════════════════════════
+//  FORM
+// ═══════════════════════════════════════════════
+function setFormMode(mode) {
+    document.getElementById('form-mode').value = mode;
+    const isReq = mode === 'request';
+    document.getElementById('btn-mode-req').className = 'flex-1 py-4 rounded-[1.5rem] font-black text-sm transition-all ' + (isReq ? 'bg-white text-indigo-600 shadow-md' : 'text-slate-400');
+    document.getElementById('btn-mode-exp').className = 'flex-1 py-4 rounded-[1.5rem] font-black text-sm transition-all ' + (!isReq ? 'bg-white text-emerald-600 shadow-md' : 'text-slate-400');
+    document.getElementById('publish-btn').textContent = isReq ? 'פרסם עכשיו' : 'הצטרף כמומחה';
+}
+function toggleGradeVis() {
+    document.getElementById('post-grade-box').classList.toggle('hidden', document.getElementById('post-role').value !== 'תלמיד');
+}
+
+document.getElementById('post-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (isRateLimited('last_post', 10000)) { showToast('⏳ המתן מעט לפני פרסום נוסף'); return; }
+
+    const title = sanitize(document.getElementById('post-title').value, 100);
+    const desc  = sanitize(document.getElementById('post-desc').value, 1000);
+    const grade = sanitize(document.getElementById('post-grade').value, 20);
+    const mode  = document.getElementById('form-mode').value;
+    if (!title || !desc) { showToast('❌ יש למלא כותרת ותיאור'); return; }
+
+    const btn = document.getElementById('publish-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> מפרסם...';
+
+    try {
+        await db.ref('posts').push({
+            creator : currentUser.name,
+            email   : currentUser.email,
+            role    : document.getElementById('post-role').value,
+            grade, type: document.getElementById('post-type').value,
+            title, desc, status: 'open', mode, time: Date.now()
         });
+        document.getElementById('post-title').value = '';
+        document.getElementById('post-desc').value  = '';
+        document.getElementById('post-grade').value = '';
+        showToast(mode === 'request' ? '✅ הבקשה פורסמה לכולם!' : '✅ המומחיות שלך פורסמה!');
+        switchTab(mode === 'request' ? 'board' : 'experts');
+    } catch(err) {
+        showToast('❌ שגיאה בפרסום — נסה שוב');
+        console.error(err);
+    }
+    btn.disabled = false;
+    btn.textContent = mode === 'request' ? 'פרסם עכשיו' : 'הצטרף כמומחה';
+});
 
-        // פנייה למומחה
-        window.openContactExpertModal = function(expertId) {
-            document.getElementById('contact-expert-id').value = expertId;
-            document.getElementById('modal-contact-expert').classList.remove('hidden');
-        };
+// ═══════════════════════════════════════════════
+//  RENDER: BOARD
+// ═══════════════════════════════════════════════
+function renderBoard() {
+    const grid   = document.getElementById('board-grid');
+    const filter = document.getElementById('board-filter').value;
+    const all    = Object.entries(cachedPosts)
+        .filter(([,p]) => p.mode === 'request' && (filter === 'all' || p.type === filter))
+        .sort(([,a],[,b]) => b.time - a.time);
 
-        document.getElementById('form-contact-expert').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            btn.disabled = true; btn.textContent = 'שולח...';
-            
-            try {
-                await expertRequestsRef.push({
-                    expertId: document.getElementById('contact-expert-id').value,
-                    requesterId: currentUser.id,
-                    requesterName: currentUser.name,
-                    requesterPhone: document.getElementById('contact-expert-phone').value.trim(),
-                    note: document.getElementById('contact-expert-note').value.trim(),
-                    status: 'pending',
-                    time: Date.now()
-                });
-                closeModal('modal-contact-expert');
-                e.target.reset();
-                showToast('📬 פנייתך נשלחה למנהלת!');
-            } catch(err) {
-                showToast('❌ שגיאה בשליחה');
-                console.error(err);
-            }
-            btn.disabled = false; btn.textContent = 'שלח פנייה';
-        });
+    if (!all.length) { grid.innerHTML = '<div class="col-span-full py-24 text-center opacity-30 font-black text-2xl">לוח הבקשות ריק כרגע</div>'; return; }
+    grid.innerHTML = '';
+    all.forEach(([key, p]) => {
+        const isOwn     = p.email === currentUser.email;
+        const isPending = Object.values(cachedVolunteers).some(v => v.postId === key && v.helperEmail === currentUser.email);
+        let btn = '';
+        if (isOwn)           btn = '<div class="text-center opacity-40 font-bold text-sm bg-indigo-100 py-4 rounded-3xl italic">ממתין למאסטרים אחרים</div>';
+        else if (isPending)  btn = '<div class="text-center text-emerald-600 font-bold py-5 bg-emerald-50 rounded-3xl flex items-center justify-center gap-2 text-sm"><span class="material-symbols-outlined text-lg">check_circle</span> פנייה בטיפול</div>';
+        else                 btn = `<button onclick="openVolunteerModal('${key}','request')" class="w-full bg-slate-950 text-white font-black py-5 rounded-[2rem] hover:bg-indigo-600 transition shadow-xl active:scale-95 text-lg uppercase tracking-widest">רוצה לעזור</button>`;
+        const card = document.createElement('div');
+        card.className = 'p-8 md:p-10 rounded-[3rem] shadow-sm transition-all animate-pop flex flex-col justify-between ' + (isOwn ? 'own-post-card' : 'bg-white border border-slate-100');
+        card.innerHTML = `
+            <div>
+                <div class="flex justify-between items-start mb-8">
+                    <span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">${escHtml(p.type)}</span>
+                    ${isOwn ? '<span class="text-[10px] font-black text-indigo-500 uppercase italic px-3 bg-white rounded-full">הבקשה שלי</span>' : `<span class="text-[10px] font-black text-slate-300 uppercase">${p.status==='open'?'פתוח':'בטיפול'}</span>`}
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 mb-4 leading-tight text-right">${escHtml(p.title)}</h3>
+                <p class="text-slate-500 text-base leading-relaxed mb-10 text-right" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${escHtml(p.desc)}</p>
+                <div class="p-6 bg-slate-50 rounded-3xl mb-8 flex items-center gap-4 border border-slate-100">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-100 flex items-center justify-center font-black text-indigo-600 text-2xl shrink-0">${escHtml(p.creator[0])}</div>
+                    <div class="text-right">
+                        <p class="text-lg font-black text-slate-900 leading-none mb-1">${escHtml(p.creator)}</p>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">${escHtml(p.role)}${p.grade ? ' • ' + escHtml(p.grade) : ''}</p>
+                    </div>
+                </div>
+            </div>
+            <div>${btn}</div>`;
+        grid.appendChild(card);
+    });
+}
 
-        // ═══════════════════════════════════════════════
-        //  UTILS
-        // ═══════════════════════════════════════════════
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        function showToast(msg) {
-            document.querySelectorAll('.toast').forEach(t => t.remove());
-            const el = document.createElement('div');
-            el.className = 'toast';
-            el.textContent = msg;
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 3500);
+// ═══════════════════════════════════════════════
+//  RENDER: EXPERTS
+// ═══════════════════════════════════════════════
+function renderExperts() {
+    const grid = document.getElementById('experts-grid');
+    const all  = Object.entries(cachedPosts).filter(([,p]) => p.mode === 'expert').sort(([,a],[,b]) => b.time - a.time);
+    if (!all.length) { grid.innerHTML = '<div class="col-span-full py-16 text-center opacity-30 font-black text-2xl">אין מומחים רשומים עדיין — היה הראשון!</div>'; return; }
+    grid.innerHTML = '';
+    all.forEach(([key, p]) => {
+        const isOwn     = p.email === currentUser.email;
+        const isPending = Object.values(cachedVolunteers).some(v => v.postId === key && v.helperEmail === currentUser.email);
+        let actionBtn = '';
+        if (isOwn) {
+            actionBtn = '<div class="text-center text-emerald-500 font-bold py-4 bg-emerald-50 rounded-3xl border border-emerald-100 text-[11px] uppercase">המומחיות שלך פעילה ✓</div>';
+        } else if (isPending) {
+            actionBtn = '<div class="text-center text-indigo-600 font-bold py-5 bg-indigo-50 rounded-3xl flex items-center justify-center gap-2 text-sm"><span class="material-symbols-outlined text-lg">check_circle</span> בקשתך בטיפול</div>';
+        } else {
+            actionBtn = `<button onclick="openVolunteerModal('${key}','expert')" class="w-full bg-emerald-600 text-white font-black py-5 rounded-[2rem] hover:bg-emerald-700 transition shadow-xl active:scale-95 text-lg flex items-center justify-center gap-2"><span class="material-symbols-outlined">front_hand</span> בקש עזרה מהמומחה</button>`;
         }
+        const card = document.createElement('div');
+        card.className = 'p-8 md:p-10 rounded-[3rem] shadow-sm transition-all animate-pop flex flex-col justify-between border-t-8 border-emerald-500 ' + (isOwn ? 'bg-emerald-50 border-2 border-emerald-200' : 'bg-white border border-slate-100');
+        card.innerHTML = `
+            <div class="text-right mb-5">
+                <div class="flex justify-between items-center mb-5">
+                    <span class="bg-emerald-50 text-emerald-600 text-[10px] font-black px-4 py-1.5 rounded-full border border-emerald-100 uppercase">${escHtml(p.type)}</span>
+                    ${isOwn ? '<span class="text-[10px] font-black text-emerald-600 italic px-3 bg-white rounded-full border border-emerald-100">שלי</span>' : ''}
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 mb-3 leading-tight">${escHtml(p.title)}</h3>
+                <p class="text-slate-500 text-base leading-relaxed mb-6" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${escHtml(p.desc)}</p>
+                <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-black text-xl shrink-0">${escHtml(p.creator[0])}</div>
+                    <div class="text-right">
+                        <p class="text-lg font-black text-slate-900 leading-none mb-1">${escHtml(p.creator)}</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">${escHtml(p.grade || p.role)}</p>
+                    </div>
+                </div>
+            </div>
+            ${actionBtn}`;
+        grid.appendChild(card);
+    });
+}
 
-        function timeAgo(ts) {
-            const diff = Math.floor((Date.now() - ts) / 60000);
-            if(diff < 1) return 'עכשיו';
-            if(diff < 60) return `לפני ${diff} דקות`;
-            const h = Math.floor(diff/60);
-            if(h < 24) return `לפני ${h} שעות`;
-            return `לפני ${Math.floor(h/24)} ימים`;
-        }
+// ═══════════════════════════════════════════════
+//  RENDER: PROFILE
+// ═══════════════════════════════════════════════
+function renderProfile() {
+    if (!currentUser) return;
+    const myPosts = Object.values(cachedPosts).filter(p => p.email === currentUser.email);
+    const myVols  = Object.values(cachedVolunteers).filter(v => v.helperEmail === currentUser.email);
+    const myAct   = [
+        ...myPosts.map(p => ({ title: p.title, actType: 'פרסום', status: p.status })),
+        ...myVols.map(v  => ({ title: v.postTitle, actType: 'התנדבות', status: v.status }))
+    ];
+    document.getElementById('prof-act-count').textContent = myAct.length;
+    document.getElementById('table-my-history').innerHTML = myAct.length
+        ? myAct.map(a => `<tr>
+            <td class="p-8">${escHtml(a.title)}</td>
+            <td class="p-8 text-center text-[10px] font-black text-slate-400 uppercase">${a.actType}</td>
+            <td class="p-8 text-center"><span class="px-5 py-2 rounded-full text-[10px] font-black uppercase ${a.status==='open'?'bg-indigo-50 text-indigo-600':a.status==='pending'?'bg-amber-50 text-amber-600':'bg-emerald-50 text-emerald-600'}">${a.status==='open'?'פתוח':a.status==='pending'?'בטיפול':'בוצע'}</span></td>
+          </tr>`).join('')
+        : '<tr><td colspan="3" class="p-24 text-center text-slate-300 italic">אין פעילות רשומה.</td></tr>';
+    updateStats();
+}
 
-        ['modal-volunteer', 'modal-logout', 'modal-post', 'modal-add-expert', 'modal-contact-expert'].forEach(id => {
-            const el = document.getElementById(id);
-            if(el) {
-                el.addEventListener('click', function(e) { if (e.target===this) closeModal(id); });
-            }
+function updateStats() {
+    if (!currentUser) return;
+    const approved = Object.values(cachedHistory).filter(m => m.helperEmail === currentUser.email && m.status === 'approved').length;
+    const points   = approved * 20;
+    document.getElementById('nav-user-points').textContent    = points;
+    document.getElementById('prof-points').textContent        = points;
+    document.getElementById('prof-helps').textContent         = approved;
+    const pct = Math.min((points / 200) * 100, 100);
+    document.getElementById('prof-meter-fill').style.width    = pct + '%';
+    document.getElementById('prof-meter-percent').textContent = Math.floor(pct) + '%';
+    document.getElementById('prof-rank').textContent          = points >= 200 ? 'מאסטר בקהילה' : points >= 60 ? 'פעיל/ה חברתית' : 'מתחיל/ה';
+    document.getElementById('prof-meter-text').textContent    = points >= 200 ? 'הגעת לדרגת שיא המעורבות!' : `עוד ${200 - points} נקודות לדרגת מאסטר`;
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER: ADMIN
+// ═══════════════════════════════════════════════
+function renderAdmin() {
+    if (!currentUser || currentUser.role !== 'admin') return;
+    const pending = Object.entries(cachedVolunteers).filter(([,v]) => v.status === 'pending');
+    document.getElementById('admin-pending-badge').textContent = pending.length;
+    const container = document.getElementById('admin-matches-container');
+
+    if (!pending.length) {
+        container.innerHTML = '';
+        document.getElementById('admin-empty').classList.remove('hidden');
+    } else {
+        document.getElementById('admin-empty').classList.add('hidden');
+        container.innerHTML = pending.map(([vid, v]) => {
+            const post = cachedPosts[v.postId] || {};
+            return `
+            <div class="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-xl border border-slate-100 flex flex-col md:flex-row justify-between gap-10 animate-pop text-right">
+                <div class="flex-1 space-y-6">
+                    <div>
+                        <span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-4 py-1 rounded-full uppercase">בקשה מקורית</span>
+                        <p class="font-black text-slate-900 text-3xl mt-2 leading-tight">${escHtml(post.title || '?')}</p>
+                        <p class="text-slate-500 font-bold italic">מאת: ${escHtml(post.creator || '?')} (${escHtml(post.role || '?')})</p>
+                    </div>
+                    <div class="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-200 relative">
+                        <div class="absolute -top-3 right-10 bg-emerald-600 text-white px-5 py-1 rounded-full text-[10px] font-black uppercase shadow">הצעת סיוע</div>
+                        <p class="font-black text-indigo-700 text-2xl mb-2">${escHtml(v.helperName)} (${escHtml(v.helperGrade)})</p>
+                        <p class="text-slate-700 font-bold mb-6 italic leading-relaxed text-xl">"${escHtml(v.note)}"</p>
+                        <div class="flex items-center gap-3 text-slate-600 font-black text-lg">
+                            <span class="material-symbols-outlined text-2xl">call</span> ${escHtml(v.helperPhone)}
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-4 justify-center shrink-0 w-full md:w-80">
+                    <button onclick="adminAction('${vid}','approved')" class="bg-emerald-600 text-white px-10 py-6 rounded-3xl font-black text-2xl hover:bg-emerald-700 transition shadow-2xl active:scale-95">אשר חיבור</button>
+                    <button onclick="adminAction('${vid}','rejected')" class="text-red-500 font-black text-sm hover:underline">דחייה זמנית</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    const hist = Object.values(cachedHistory).sort((a,b) => b.time - a.time);
+    document.getElementById('admin-history-grid').innerHTML = hist.map(m => `
+        <div class="bg-white p-8 rounded-[3rem] border border-slate-100 opacity-70 flex flex-col justify-between gap-6 shadow-sm text-right animate-pop">
+            <div class="flex justify-between items-center">
+                <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase ${m.status==='approved'?'bg-emerald-50 text-emerald-600':'bg-red-50 text-red-600'}">${m.status==='approved'?'בוצע':'נדחה'}</span>
+                <p class="text-[10px] font-bold text-slate-300">${new Date(m.time).toLocaleDateString('he-IL')}</p>
+            </div>
+            <h5 class="font-black text-indigo-950 text-xl leading-tight">${escHtml(m.title)}</h5>
+            <p class="text-xs font-bold text-slate-400">${escHtml(m.helper)} ➔ ${escHtml(m.creator)}</p>
+        </div>`).join('');
+}
+
+async function adminAction(vid, status) {
+    const v    = cachedVolunteers[vid];
+    const post = cachedPosts[v.postId];
+    if (!v) return;
+    try {
+        const updates = {};
+        if (status === 'approved' && post && post.mode === 'request')
+            updates[`posts/${v.postId}/status`] = 'matched';
+        await db.ref().update(updates);
+        await db.ref('history').push({ time: Date.now(), title: v.postTitle, creator: post ? post.creator : '?', helper: v.helperName, helperEmail: v.helperEmail, status });
+        await db.ref(`volunteers/${vid}`).remove();
+        showToast(status === 'approved' ? '✅ החיבור אושר!' : '❌ הבקשה נדחתה.');
+    } catch(err) { showToast('❌ שגיאה — נסה שוב'); console.error(err); }
+}
+
+// ═══════════════════════════════════════════════
+//  ADD EXPERT MODAL
+// ═══════════════════════════════════════════════
+function openAddExpertModal() {
+    document.getElementById('exp-name').value  = currentUser.name;
+    document.getElementById('exp-grade').value = '';
+    document.getElementById('exp-title').value = '';
+    document.getElementById('exp-desc').value  = '';
+    document.getElementById('modal-add-expert').classList.remove('hidden');
+    document.querySelector('#modal-add-expert .modal-scroll-area').scrollTop = 0;
+}
+
+document.getElementById('add-expert-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (isRateLimited('last_expert', 10000)) { showToast('⏳ המתן מעט לפני פרסום נוסף'); return; }
+    const title = sanitize(document.getElementById('exp-title').value, 100);
+    const desc  = sanitize(document.getElementById('exp-desc').value, 1000);
+    const grade = sanitize(document.getElementById('exp-grade').value, 40);
+    if (!title || !desc || !grade) { showToast('❌ יש למלא את כל השדות'); return; }
+    const btn = document.getElementById('add-expert-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> מפרסם...';
+    try {
+        await db.ref('posts').push({
+            creator: currentUser.name, email: currentUser.email,
+            role: 'מומחה', grade,
+            type: document.getElementById('exp-type').value,
+            title, desc, status: 'open', mode: 'expert', time: Date.now()
         });
+        closeModal('modal-add-expert');
+        showToast('✅ המומחיות שלך פורסמה בלוח!');
+        switchTab('experts');
+    } catch(err) { showToast('❌ שגיאה — נסה שוב'); console.error(err); }
+    btn.disabled = false;
+    btn.textContent = 'פרסם את המומחיות שלי';
+});
 
-        // ═══════════════════════════════════════════════
-        //  STARTUP
-        // ═══════════════════════════════════════════════
-        db.ref('.info/connected').on('value', snap => {
-            const el = document.getElementById('conn-status');
-            if (snap.val() === true) {
-                el.classList.replace('bg-slate-300', 'bg-emerald-400');
-                el.classList.replace
+// ═══════════════════════════════════════════════
+//  VOLUNTEER MODAL
+// ═══════════════════════════════════════════════
+function openVolunteerModal(postId, mode) {
+    activePostId = postId;
+    document.getElementById('v-modal-title').textContent = mode === 'request' ? 'מתאים לי לעזור' : 'בקשת סיוע ממומחה';
+    document.getElementById('v-name').value  = currentUser.name;
+    document.getElementById('v-grade').value = '';
+    document.getElementById('v-phone').value = '';
+    document.getElementById('v-note').value  = '';
+    document.getElementById('modal-volunteer').classList.remove('hidden');
+    document.querySelector('#modal-volunteer .modal-scroll-area').scrollTop = 0;
+}
+
+document.getElementById('volunteer-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (isRateLimited('last_vol', 15000)) { showToast('⏳ המתן מעט לפני שליחה נוספת'); return; }
+    const post = cachedPosts[activePostId];
+    if (!post) { showToast('❌ הבקשה לא נמצאה'); return; }
+    const grade = sanitize(document.getElementById('v-grade').value, 20);
+    const phone = sanitize(document.getElementById('v-phone').value, 20);
+    const note  = sanitize(document.getElementById('v-note').value, 500);
+    if (!grade || !phone || !note) { showToast('❌ יש למלא את כל השדות'); return; }
+
+    const btn = document.getElementById('volunteer-submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> שולח...';
+    try {
+        await db.ref('volunteers').push({ postId: activePostId, postTitle: post.title, helperName: currentUser.name, helperEmail: currentUser.email, helperGrade: grade, helperPhone: phone, note, status: 'pending', time: Date.now() });
+        closeModal('modal-volunteer');
+        showToast('📬 הפנייה נשלחה! המנהלת תעדכן אותך.');
+        switchTab('profile');
+    } catch(err) { showToast('❌ שגיאה בשליחה — נסה שוב'); console.error(err); }
+    btn.disabled = false;
+    btn.textContent = 'שלח פנייה למנהלת';
+});
+
+// ═══════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+function showToast(msg) {
+    document.querySelectorAll('.toast').forEach(t => t.remove());
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3500);
+}
+
+['modal-volunteer','modal-logout','modal-add-expert'].forEach(id => {
+    document.getElementById(id).addEventListener('click', function(e) { if (e.target===this) closeModal(id); });
+});
+
+// ═══════════════════════════════════════════════
+//  STARTUP — wait for Firebase connection
+// ═══════════════════════════════════════════════
+db.ref('.info/connected').once('value', () => {
+    setTimeout(() => {
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('view-login').classList.remove('hidden');
+    }, 400);
+});
+</script>
+</body>
+</html>
