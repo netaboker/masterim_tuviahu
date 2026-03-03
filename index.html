@@ -473,16 +473,16 @@
 // ═══════════════════════════════════════════════
 //  FIREBASE
 // ═══════════════════════════════════════════════
+// NOTE: Do NOT include Firebase apiKey here. Netlify blocks builds if it detects "AIza...".
+// Realtime Database works without it in this setup.
 const firebaseConfig = {
-    apiKey: "AIzaSyCKgcCNPbGjt0HKRKWYdR4LQFeBzvqixF8",
     authDomain: "masterim-92c84.firebaseapp.com",
     databaseURL: "https://masterim-92c84-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "masterim-92c84",
     storageBucket: "masterim-92c84.firebasestorage.app",
     messagingSenderId: "340433499517",
     appId: "1:340433499517:web:42caed4f25574d1ffbc814"
-};
-firebase.initializeApp(firebaseConfig);
+};firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // ═══════════════════════════════════════════════
